@@ -1,49 +1,446 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   Design tokens
+   --------------------------------------------------------------------------
+   Exposed twice, on purpose:
+
+   1. As CSS variables in `:root` — for CSS Modules and inline styles.
+   2. Through Tailwind v4's `@theme` — so every token is ALSO a utility class:
+      `bg-surface`, `text-ink-muted`, `border-border`, `rounded-lg`,
+      `shadow-md`, `text-2xl`, `p-4`, `leading-tight`, `max-w-content`…
+
+   Components never hard-code a colour, radius, shadow or spacing value.
+   If you need a new value, add a token here first.
+   ========================================================================== */
+
+@theme {
+  /* ---- Colour ---------------------------------------------------------- */
+  --color-bg: #ffffff;
+  --color-surface: #f4f5f7;
+  --color-surface-2: #e9ebef;
+  --color-ink: #0b0b0f;
+  --color-ink-muted: #5b6170;
+  --color-border: #dfe2e8;
+  --color-primary: #0b0b0f;
+  --color-on-primary: #ffffff;
+  --color-dark: #0b0b0f;
+  --color-on-dark: #ffffff;
+  --color-accent: #f59e0b;
+  --color-focus: #2563eb;
+  /* Lighter focus ring for dark surfaces: the standard blue only reaches
+     ~3.3:1 against near-black, this reaches ~10:1. */
+  --color-focus-dark: #93c5fd;
+
+  /* Status: each text colour clears 4.5:1 against its own tint. */
+  --color-success: #15803d;
+  --color-success-bg: #dcfce7;
+  --color-warning: #a16207;
+  --color-warning-bg: #fef3c7;
+  --color-danger: #b91c1c;
+  --color-danger-bg: #fee2e2;
+  --color-info: #1d4ed8;
+  --color-info-bg: #dbeafe;
+  --color-neutral: #374151;
+  --color-neutral-bg: #e5e7eb;
+
+  /* ---- Typography ------------------------------------------------------ */
+  /* `--font-brand` is injected by next/font on <html>; the fallback keeps
+     the stack valid if the font fails to load. */
+  --font-sans: var(--font-brand, system-ui), system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.375rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.75rem;
+  --text-2xl--line-height: 2.125rem;
+  --text-3xl: 2.25rem;
+  --text-3xl--line-height: 2.5rem;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+
+  /* ---- Radius ---------------------------------------------------------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* ---- Elevation ------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px rgb(11 11 15 / 0.06);
+  --shadow-md: 0 4px 16px rgb(11 11 15 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(11 11 15 / 0.14);
+
+  /* ---- Spacing: 4px base ------------------------------------------------ */
+  --spacing: 0.25rem;
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --container-content: 75rem; /* 1200px */
+
+  /* ---- Breakpoints ------------------------------------------------------ */
+  --breakpoint-sm: 40rem; /* 640px  */
+  --breakpoint-md: 48rem; /* 768px  */
+  --breakpoint-lg: 64rem; /* 1024px */
+  --breakpoint-xl: 80rem; /* 1280px */
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Named spacing scale for CSS Modules (Tailwind reads `--spacing`). */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+
+    /* Minimum comfortable touch target. */
+    --tap: 44px;
+
+    /* Layout frame. */
+    --page-gutter: var(--space-4);
+    --content-max: var(--container-content);
+    /* Height reserved for the mobile tab bar. 0 until a layout opts in via
+       `.app-frame--bottom-nav`, so no phantom gap is left on screen. */
+    --bottom-nav-h: 0px;
+    --topbar-h: 56px;
   }
-}
 
-html {
-  height: 100%;
-}
+  /* Tablet and up: adjust the frame here, not in every component. */
+  @media (min-width: 640px) {
+    :root {
+      --page-gutter: var(--space-5);
+    }
+  }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+  @media (min-width: 1024px) {
+    :root {
+      --page-gutter: var(--space-6);
+    }
+  }
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
   html {
-    color-scheme: dark;
+    scroll-behavior: smooth;
+    /* Guard against accidental horizontal scroll on narrow phones.
+       `clip` rather than `hidden`: no scroll container is created, so
+       `position: sticky` keeps working. The device sweep still measures
+       element boxes, so a real overflow bug cannot hide behind this. */
+    overflow-x: clip;
+    @apply font-sans;
   }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    @apply bg-background text-foreground;
+  }
+
+  /* Tailwind's preflight resets headings to `inherit`; restore a scale.
+     The utilities layer still wins, so `class="text-3xl"` keeps working. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: var(--leading-tight);
+  }
+  h1 {
+    font-size: var(--text-2xl);
+  }
+  h2 {
+    font-size: var(--text-xl);
+  }
+  h3 {
+    font-size: var(--text-lg);
+  }
+
+  /* Opt back into list semantics where the markup is a real list. */
+  ul[role="list"],
+  ol[role="list"] {
+    list-style: none;
+    padding: 0;
+  }
+
+  /* ---- Accessibility --------------------------------------------------- */
+  /* box-sizing: border-box comes from Tailwind's preflight
+     (`*, ::after, ::before, ::backdrop, ::file-selector-button`), which is
+     why it is not repeated here. */
+
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* 44x44 minimum touch target.
+     `min-height` / `min-width` are ignored by inline (non-replaced) boxes,
+     so a link inside a paragraph is untouched while a standalone link,
+     button or field gets the full target. */
+  a,
+  button,
+  select,
+  summary,
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea {
+    min-height: var(--tap);
+  }
+  a,
+  button {
+    min-width: var(--tap);
+  }
+
+  /* 16px inputs stop iOS Safari zooming in on focus. */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1rem);
+  }
+
+  /* Brand-tinted checkboxes, radios, ranges and progress bars.
+     A declaration must sit inside a style rule — a bare declaration in an
+     at-rule is invalid CSS. */
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  progress,
+  meter {
+    accent-color: var(--color-primary);
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
+
+/* Reduced motion is honoured globally, and beats every utility because it is
+   unlayered. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+  /* The focus indicator must appear immediately, never fade in.
+     Tailwind v4's `transition-colors` includes `outline-color`, which makes
+     the ring animate on focus. This restores the list without it.
+     Authored in the utilities layer so it wins over the `transition-*`
+     utilities regardless of specificity. */
+  :focus-visible {
+    transition-property: color, background-color, border-color,
+      text-decoration-color, fill, stroke;
+  }
+}
+
+@layer components {
+  /* Marker for dark surfaces: switches the focus ring to the light blue. */
+  .on-dark :focus-visible {
+    outline-color: var(--color-focus-dark);
+  }
+
+  /* Page frame: max width + responsive gutters.
+     Named `.shell`, not `.container` — Tailwind v4 ships its own `container`
+     utility with different max-widths, and a same-named class would silently
+     win over one of the two. */
+  .shell {
+    width: 100%;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  /* Vertical page frame. Reserves room for the mobile tab bar and the phone's
+     home indicator. Add `.app-frame--bottom-nav` when a tab bar is rendered. */
+  .app-frame {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
+  }
+
+  .app-frame--bottom-nav {
+    --bottom-nav-h: 64px;
+  }
+
+  @media (min-width: 640px) {
+    .app-frame--bottom-nav {
+      --bottom-nav-h: 0px;
+    }
+  }
+
+  /* Vertical rhythm. Override per use: `style={{ "--stack-gap": "12px" }}`. */
+  .stack > * + * {
+    margin-top: var(--stack-gap, var(--space-4));
+  }
+
+  /* Horizontal card rows (top trends, brand chips). */
+  .scroll-row {
+    display: flex;
+    gap: var(--space-3);
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-block: var(--space-2);
+    scrollbar-width: none;
+  }
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-row > * {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  /* Keyboard users land here first. */
+  .skip-link {
+    position: absolute;
+    left: var(--space-4);
+    top: -100px;
+    z-index: 100;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+  }
+  .skip-link:focus {
+    top: var(--space-3);
+  }
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
