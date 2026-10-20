@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Car photo placeholder">
+  <rect width="800" height="600" fill="#e9ebef" />
+  <g fill="none" stroke="#5b6170" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M168 388v-56l64-84h336l64 84v56" />
+    <path d="M156 388h488" />
+    <path d="M232 304h336" />
+    <circle cx="262" cy="398" r="44" />
+    <circle cx="538" cy="398" r="44" />
+  </g>
+  <text x="400" y="500" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="30" fill="#5b6170">Owner photo pending</text>
+</svg>
