@@ -1,7 +1,23 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Car, House, LogIn, UserPlus } from "lucide-react";
+import GooeyNav from "@/components/layout/GooeyNav";
 import Navbar from "@/components/layout/Navbar";
 import { SITE_NAME } from "@/lib/seo/site";
+
+/**
+ * The mobile tab bar.
+ *
+ * On a phone this is the primary navigation, so the header links are hidden
+ * below lg and the tab bar takes over. From lg up the header nav and the
+ * footer cover the same ground and the tab bar is removed.
+ */
+const MOBILE_NAV = [
+  { href: "/", label: "Home", icon: <House className="size-5" /> },
+  { href: "/cars", label: "Cars", icon: <Car className="size-5" /> },
+  { href: "/signin", label: "Sign in", icon: <LogIn className="size-5" /> },
+  { href: "/signup", label: "Join", icon: <UserPlus className="size-5" /> },
+];
 
 /**
  * Public surface: browsing, authentication and marketing pages.
@@ -11,8 +27,9 @@ import { SITE_NAME } from "@/lib/seo/site";
  */
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="app-frame">
+    <div className="app-frame app-frame--bottom-nav">
       <Navbar
+        hideNavBelowLg
         brand={SITE_NAME}
         items={[{ href: "/cars", label: "Browse cars" }]}
         actions={
@@ -43,6 +60,13 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
           <p>Demo build. Data is simulated and resets on refresh.</p>
         </div>
       </footer>
+
+      {/* Mobile bottom navigation. */}
+      <div className="fixed inset-x-0 bottom-0 z-50 lg:hidden">
+        <div className="border-t border-border bg-bg/95 pt-1.5 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+          <GooeyNav items={MOBILE_NAV} label="Sections" className="shell" />
+        </div>
+      </div>
     </div>
   );
 }

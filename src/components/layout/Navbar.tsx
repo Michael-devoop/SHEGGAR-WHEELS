@@ -14,11 +14,17 @@ export default function Navbar({
   actions,
   brandHref = "/",
   brand = "Sheggar Wheels",
+  hideNavBelowLg = false,
 }: {
   items: NavItem[];
   actions?: ReactNode;
   brandHref?: string;
   brand?: string;
+  /**
+   * Hide the links below lg, for groups that put their navigation in a
+   * bottom tab bar instead.
+   */
+  hideNavBelowLg?: boolean;
 }) {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/90 backdrop-blur">
@@ -32,10 +38,15 @@ export default function Navbar({
         </Link>
 
         {/* On phones the nav wraps onto its own scrollable row so the brand
-            and account actions never squeeze it out of view. */}
+            and account actions never squeeze it out of view. Groups with a
+            bottom tab bar hide it instead. */}
         <nav
           aria-label="Main"
-          className="order-3 w-full overflow-x-auto lg:order-2 lg:w-auto lg:flex-1"
+          className={
+            hideNavBelowLg
+              ? "hidden lg:order-2 lg:block lg:w-auto lg:flex-1"
+              : "order-3 w-full overflow-x-auto lg:order-2 lg:w-auto lg:flex-1"
+          }
         >
           <Suspense fallback={<NavList items={items} />}>
             <NavLinks items={items} />

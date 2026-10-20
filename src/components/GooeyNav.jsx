@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 
 import './GooeyNav.css';
 
@@ -205,7 +206,7 @@ const GooeyNav = ({
   items = DEFAULT_ITEMS,
   initialActiveIndex = 0,
   activeIndex,
-  onChange,
+  onChange = () => {},
   theme = 'dark',
   color,
   activeTextColor,
@@ -220,7 +221,7 @@ const GooeyNav = ({
   wobble = 0.5,
   hoverEffect = true,
   className = '',
-  style
+  style = {}
 }) => {
   const [innerIndex, setInnerIndex] = useState(initialActiveIndex);
   const current = Math.min(Math.max(0, activeIndex ?? innerIndex), Math.max(0, items.length - 1));
@@ -774,9 +775,9 @@ const GooeyNav = ({
           data-active={index === current ? '' : undefined}
         >
           {item.href ? (
-            <a href={item.href} {...shared}>
+            <Link href={item.href} {...shared}>
               {content}
-            </a>
+            </Link>
           ) : (
             <button type="button" {...shared}>
               {content}

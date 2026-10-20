@@ -265,6 +265,13 @@
     outline-color: var(--color-focus-dark);
   }
 
+  /* A control that sits on a dark fill (the nav blob, a filled button) needs
+     the light ring too. The attribute keeps this out of the component's
+     markup contract. */
+  [data-on-dark-surface]:focus-visible {
+    outline-color: var(--color-focus-dark);
+  }
+
   /* Page frame: max width + responsive gutters.
      Named `.shell`, not `.container` — Tailwind v4 ships its own `container`
      utility with different max-widths, and a same-named class would silently
@@ -289,7 +296,9 @@
     --bottom-nav-h: 64px;
   }
 
-  @media (min-width: 640px) {
+  /* The bottom tab bar is hidden from lg up, so the space it holds is
+     released at the same breakpoint. */
+  @media (min-width: 1024px) {
     .app-frame--bottom-nav {
       --bottom-nav-h: 0px;
     }
@@ -381,7 +390,10 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  /* The brand accent. shadcn's `--accent` is what feeds `--color-accent`,
+     so this is where the amber belongs in the shadcn token system. */
+  --accent: #f59e0b;
+  --primary: #0b0b0f;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
