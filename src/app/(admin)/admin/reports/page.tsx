@@ -1,5 +1,16 @@
-import RouteShell from "@/components/layout/RouteShell";
+import type { Metadata } from "next";
+
+import AdminReports from "@/components/admin/AdminReports";
+
+export const metadata: Metadata = {
+  title: "Reports",
+  robots: { index: false, follow: false },
+};
 
 export default function Page() {
-  return <RouteShell area="Admin" title="Reports" />;
+  return (
+    <div className="shell py-8 sm:py-10">
+      <AdminReports />
+    </div>
+  );
 }
