@@ -1,0 +1,143 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+import Link from "next/link";
+
+import CarCard from "@/components/cars/CarCard";
+import { PAGE_SIZE, STORAGE_KEYS } from "@/lib/constants";
+import { listCars } from "@/lib/data/cars";
+import {
+  averageRatingForCar,
+  listReviewsForCar,
+} from "@/lib/data/reviews";
+import { searchCars, type CatalogueQuery } from "@/lib/domain/catalogue";
+import { localStore } from "@/lib/storage/storage";
+import type { Car } from "@/types";
+
+const subscribe = (onChange: () => void): (() => void) =>
+  localStore.subscribe(STORAGE_KEYS.cars, () => onChange());
+
+const getSnapshot = (): string => JSON.stringify(listCars());
+
+function catalogueHref(query: CatalogueQuery, page: number): string {
+  const params = new URLSearchParams();
+  if (query.q) params.set("q", query.q);
+  if (query.neighbourhood) params.set("neighbourhood", query.neighbourhood);
+  if (query.transmission) params.set("transmission", query.transmission);
+  if (query.maxPrice !== null) params.set("maxPrice", String(query.maxPrice));
+  if (query.sort !== "newest") params.set("sort", query.sort);
+  if (page > 1) params.set("page", String(page));
+
+  const search = params.toString();
+  return search ? `/cars?${search}` : "/cars";
+}
+
+/**
+ * Catalogue results.
+ *
+ * The server renders the seeded approved cars for search engines. After
+ * hydration the same component reads the browser store, so a listing that an
+ * owner created and an admin approved appears without a rebuild.
+ */
+export default function CatalogueResults({
+  query,
+  initialCars,
+}: {
+  query: CatalogueQuery;
+  initialCars: Car[];
+}) {
+  const raw = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    () => JSON.stringify(initialCars),
+  );
+  const cars = JSON.parse(raw) as Car[];
+  const result = searchCars(cars, query);
+
+  const firstOnPage = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
+  const lastOnPage = (result.page - 1) * PAGE_SIZE + result.cars.length;
+
+  return (
+    <section aria-labelledby="results">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="results" className="text-lg font-bold tracking-tight text-ink">
+          {result.total === 0
+            ? "No cars match"
+            : `${result.total} car${result.total === 1 ? "" : "s"} available`}
+        </h2>
+        {result.total > 0 ? (
+          <p className="text-sm text-ink-muted" aria-live="polite">
+            Showing {firstOnPage}–{lastOnPage} of {result.total}
+          </p>
+        ) : null}
+      </div>
+
+      {result.cars.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-border bg-surface p-6">
+          <p className="font-semibold text-ink">Nothing matches those filters.</p>
+          <p className="mt-1 text-sm text-ink-muted">
+            Try a wider price range or another neighbourhood.
+          </p>
+          <Link
+            href="/cars"
+            className="mt-4 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
+          >
+            Clear all filters
+          </Link>
+        </div>
+      ) : (
+        <ul role="list" className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {result.cars.map((car) => {
+            const reviews = listReviewsForCar(car.id);
+            return (
+              <li key={car.id}>
+                <CarCard
+                  car={car}
+                  rating={averageRatingForCar(car.id)}
+                  reviewCount={reviews.length}
+                />
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {result.pageCount > 1 ? (
+        <nav
+          aria-label="Catalogue pages"
+          className="mt-8 flex items-center justify-between border-t border-border pt-4"
+        >
+          {result.hasPrevious ? (
+            <Link
+              href={catalogueHref(query, result.page - 1)}
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-surface-2"
+            >
+              ← Previous
+            </Link>
+          ) : (
+            <span className="inline-flex min-h-11 items-center px-4 text-sm text-ink-muted">
+              ← Previous
+            </span>
+          )}
+
+          <p className="text-sm text-ink-muted">
+            Page {result.page} of {result.pageCount}
+          </p>
+
+          {result.hasNext ? (
+            <Link
+              href={catalogueHref(query, result.page + 1)}
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-surface-2"
+            >
+              Next →
+            </Link>
+          ) : (
+            <span className="inline-flex min-h-11 items-center px-4 text-sm text-ink-muted">
+              Next →
+            </span>
+          )}
+        </nav>
+      ) : null}
+    </section>
+  );
+}
