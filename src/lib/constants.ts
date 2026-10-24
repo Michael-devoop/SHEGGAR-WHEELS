@@ -62,6 +62,27 @@ export const PAGE_SIZE = 9;
 export const CURRENCY = "ETB";
 
 /** Addis Ababa neighbourhoods covered by the marketplace. */
+/** Every listing without uploaded photos uses this placeholder. */
+export const CAR_PLACEHOLDER_PHOTO = "/images/cars/placeholder.svg";
+
+/**
+ * Approximate neighbourhood centres, used when an owner lists a car.
+ * The listing form collects a neighbourhood, not raw coordinates.
+ */
+export const NEIGHBOURHOOD_COORDS: Record<
+  (typeof NEIGHBOURHOODS)[number],
+  { latitude: number; longitude: number }
+> = {
+  Bole: { latitude: 8.995, longitude: 38.787 },
+  Piassa: { latitude: 9.033, longitude: 38.75 },
+  CMC: { latitude: 9.02, longitude: 38.74 },
+  Kazanchis: { latitude: 9.015, longitude: 38.765 },
+  Sarbet: { latitude: 9.013, longitude: 38.759 },
+  Megenagna: { latitude: 8.997, longitude: 38.78 },
+  Ayat: { latitude: 8.99, longitude: 38.804 },
+  Summit: { latitude: 9.016, longitude: 38.854 },
+};
+
 export const NEIGHBOURHOODS = [
   "Bole",
   "Piassa",

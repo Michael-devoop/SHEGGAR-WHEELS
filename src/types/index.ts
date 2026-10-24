@@ -1,10 +1,13 @@
 /**
  * Domain types.
  *
- * Every union is derived from the constant arrays in `@/lib/constants`, so a
- * new status cannot be added to the runtime data without also being valid in
- * the type system.
+ * Enum-like unions are derived from the constant arrays in
+ * `@/lib/constants`; entity shapes are inferred from the Zod schemas in
+ * `@/lib/schemas`. There is exactly one definition per concept, so a status
+ * or field cannot be valid in one place and missing in another.
  */
+import type { z } from "zod";
+
 import type {
   BOOKING_STATUSES,
   CAR_STATUSES,
@@ -14,6 +17,19 @@ import type {
   TRANSMISSIONS,
   USER_STATUSES,
 } from "@/lib/constants";
+import type {
+  announcementDraftSchema,
+  announcementSchema,
+  bookingSchema,
+  carDraftSchema,
+  carSchema,
+  disputeDraftSchema,
+  disputeSchema,
+  reviewDraftSchema,
+  reviewSchema,
+  sessionSchema,
+  userSchema,
+} from "@/lib/schemas";
 
 export type Role = (typeof ROLES)[number];
 export type UserStatus = (typeof USER_STATUSES)[number];
@@ -23,96 +39,27 @@ export type BookingStatus = (typeof BOOKING_STATUSES)[number];
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 export type DisputeStatus = (typeof DISPUTE_STATUSES)[number];
 
+/**
+ * Outcome of an operation that can fail without throwing.
+ *
+ * `error` is a user-safe message, never a raw exception.
+ */
+export type Result<T> = { ok: true; data: T } | { ok: false; error: string };
+
 /** Calendar date, `YYYY-MM-DD`. Always interpreted in UTC. */
 export type ISODate = string;
 
 /** Full ISO 8601 timestamp, e.g. `2026-10-20T09:30:00.000Z`. */
 export type ISODateTime = string;
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  roles: Role[];
-  status: UserStatus;
-  createdAt: ISODateTime;
-}
-
-export interface Car {
-  id: string;
-  ownerId: string;
-  make: string;
-  model: string;
-  year: number;
-  transmission: Transmission;
-  seats: number;
-  city: string;
-  neighbourhood: string;
-  latitude: number;
-  longitude: number;
-  pricePerDay: number;
-  photos: string[];
-  description: string;
-  status: CarStatus;
-  unavailableDates: ISODate[];
-  createdAt: ISODateTime;
-}
-
-export interface Booking {
-  id: string;
-  carId: string;
-  renterId: string;
-  ownerId: string;
-  startDate: ISODate;
-  endDate: ISODate;
-  days: number;
-  /** Price snapshot, captured at booking time so later edits cannot rewrite history. */
-  pricePerDay: number;
-  subtotal: number;
-  fee: number;
-  total: number;
-  paymentStatus: PaymentStatus;
-  status: BookingStatus;
-  createdAt: ISODateTime;
-  updatedAt: ISODateTime;
-}
-
-export interface Review {
-  id: string;
-  bookingId: string;
-  carId: string;
-  renterId: string;
-  ownerId: string;
-  rating: number;
-  comment: string;
-  ownerReply?: string;
-  createdAt: ISODateTime;
-}
-
-export interface Dispute {
-  id: string;
-  bookingId: string;
-  openedBy: string;
-  reason: string;
-  description: string;
-  status: DisputeStatus;
-  resolutionNotes?: string;
-  resolvedBy?: string;
-  createdAt: ISODateTime;
-  resolvedAt?: ISODateTime;
-}
-
-export interface Announcement {
-  id: string;
-  title: string;
-  message: string;
-  active: boolean;
-  createdAt: ISODateTime;
-  createdBy: string;
-}
-
-export interface Session {
-  userId: string;
-  signedInAt: ISODateTime;
-}
+export type User = z.infer<typeof userSchema>;
+export type Car = z.infer<typeof carSchema>;
+export type CarDraft = z.infer<typeof carDraftSchema>;
+export type Booking = z.infer<typeof bookingSchema>;
+export type Review = z.infer<typeof reviewSchema>;
+export type ReviewDraft = z.infer<typeof reviewDraftSchema>;
+export type Dispute = z.infer<typeof disputeSchema>;
+export type DisputeDraft = z.infer<typeof disputeDraftSchema>;
+export type Announcement = z.infer<typeof announcementSchema>;
+export type AnnouncementDraft = z.infer<typeof announcementDraftSchema>;
+export type Session = z.infer<typeof sessionSchema>;
