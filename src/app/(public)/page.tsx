@@ -1,4 +1,6 @@
 import Link from "next/link";
+
+import AnnouncementBanner from "@/components/layout/AnnouncementBanner";
 import { NEIGHBOURHOODS } from "@/lib/constants";
 import { formatETB } from "@/lib/format";
 
@@ -62,6 +64,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <AnnouncementBanner />
 
       {/* Neighbourhoods ------------------------------------------------- */}
       <section aria-labelledby="neighbourhoods" className="shell py-10">
