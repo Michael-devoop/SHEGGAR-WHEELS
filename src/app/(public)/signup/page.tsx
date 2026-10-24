@@ -1,5 +1,9 @@
-import RouteShell from "@/components/layout/RouteShell";
+import SignUpForm from "@/components/auth/SignUpForm";
 
 export default function Page() {
-  return <RouteShell area="Public" title="Create your account" />;
+  return (
+    <div className="shell py-10 sm:py-14">
+      <SignUpForm />
+    </div>
+  );
 }

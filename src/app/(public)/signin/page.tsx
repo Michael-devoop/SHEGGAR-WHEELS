@@ -1,5 +1,19 @@
-import RouteShell from "@/components/layout/RouteShell";
+import { Suspense } from "react";
+
+import SignInForm from "@/components/auth/SignInForm";
 
 export default function Page() {
-  return <RouteShell area="Public" title="Sign in" />;
+  return (
+    <div className="shell py-10 sm:py-14">
+      <Suspense
+        fallback={
+          <p role="status" className="text-sm text-ink-muted">
+            Loading sign in…
+          </p>
+        }
+      >
+        <SignInForm />
+      </Suspense>
+    </div>
+  );
 }

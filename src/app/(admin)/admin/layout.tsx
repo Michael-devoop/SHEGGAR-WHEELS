@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import Navbar from "@/components/layout/Navbar";
+import RoleGuard from "@/components/layout/RoleGuard";
+import SessionMenu from "@/components/auth/SessionMenu";
 
 const NAV = [
   { href: "/admin", label: "Overview" },
@@ -11,13 +13,18 @@ const NAV = [
   { href: "/admin/reports", label: "Reports" },
 ];
 
-/** Admin surface. Access rules are enforced in the auth phase. */
+/** Admin surface. Access is enforced by `RoleGuard`. */
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="app-frame">
-      <Navbar brand="Sheggar Wheels" brandHref="/admin" items={NAV} />
+      <Navbar
+        brand="Sheggar Wheels"
+        brandHref="/admin"
+        items={NAV}
+        actions={<SessionMenu />}
+      />
       <main id="main" className="flex-1">
-        {children}
+        <RoleGuard area="admin">{children}</RoleGuard>
       </main>
     </div>
   );
