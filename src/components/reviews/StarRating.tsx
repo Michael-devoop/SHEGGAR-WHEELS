@@ -30,7 +30,7 @@ export default function StarRating({
             className={cn(
               starSize,
               position <= filled
-                ? "fill-accent text-accent"
+                ? "fill-highlight text-highlight"
                 : "fill-transparent text-border",
             )}
           />
