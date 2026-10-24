@@ -33,7 +33,7 @@ export default function Navbar({
           href={brandHref}
           className="order-1 flex min-h-11 shrink-0 items-center gap-2 text-base font-bold tracking-tight text-ink"
         >
-          <span aria-hidden="true" className="size-2.5 rounded-pill bg-accent" />
+          <span aria-hidden="true" className="size-2.5 rounded-pill bg-highlight" />
           {brand}
         </Link>
 

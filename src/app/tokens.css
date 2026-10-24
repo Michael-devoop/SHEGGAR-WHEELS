@@ -1,0 +1,280 @@
+/* =====================================================================
+   Sheggar Wheels design tokens
+
+   Layer 1  Primitives  raw values. Never used directly in components.
+   Layer 2  Semantic    what components use (--color-text, --color-action ...).
+
+   Dark areas (sign-in hero, car-detail header, bottom bars) are NOT a theme
+   switch. Put data-surface="dark" on any element and every semantic colour
+   inside it remaps, so components need no dark-mode code of their own.
+
+   Breakpoints (CSS variables cannot be used inside media queries):
+     sm 640px   md 768px (bottom tab bar becomes a top navbar)   lg 1024px
+   ===================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- Layer 1: primitives ---------- */
+
+  /* neutral ramp (cool grey, matches the mockup's black/white look) */
+  --gray-0: #ffffff;
+  --gray-50: #f4f5f7;
+  --gray-100: #e9ebef;
+  --gray-200: #dfe2e8;
+  --gray-400: #a3a8b5;
+  --gray-500: #7b8190;
+  --gray-600: #5b6170;
+  --gray-700: #374151;
+  --gray-800: #23252d;
+  --gray-900: #16171d;
+  --gray-950: #0b0b0f;
+
+  /* accent (star ratings, highlights) */
+  --amber-100: #fef3c7;
+  --amber-500: #f59e0b;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+
+  /* status hues */
+  --green-100: #dcfce7;
+  --green-800: #166534;
+  --red-100: #fee2e2;
+  --red-700: #b91c1c;
+  --red-800: #991b1b;
+  --blue-100: #dbeafe;
+  --blue-700: #1d4ed8;
+  --blue-600: #2563eb;
+  --blue-400: #60a5fa;
+
+  /* ---------- Layer 2: semantic colour ---------- */
+
+  /* surfaces */
+  --color-bg: var(--gray-0);              /* page */
+  --color-surface: var(--gray-0);         /* cards, sheets (separate with border/shadow) */
+  --color-surface-muted: var(--gray-50);  /* inputs, chips, search bar */
+  --color-surface-sunken: var(--gray-100);/* pressed state, skeleton base */
+  --color-surface-inverse: var(--gray-950);
+
+  /* text */
+  --color-text: var(--gray-950);
+  --color-text-muted: var(--gray-600);
+  --color-text-inverse: var(--gray-0);
+
+  /* borders: --color-border is decoration only (dividers, card edges).
+     Anything that marks a control (input, checkbox, outlined button)
+     must use --color-border-control (3:1 or better). */
+  --color-border: var(--gray-200);
+  --color-border-control: var(--gray-500);
+
+  /* primary action (black button in the mockup) */
+  --color-action: var(--gray-950);
+  --color-action-hover: var(--gray-800);
+  --color-action-text: var(--gray-0);
+
+  /* accent: amber is a FILL colour (stars). For amber text use accent-text. */
+  --color-accent: var(--amber-500);
+  --color-accent-text: var(--amber-700);
+
+  /* focus ring */
+  --color-focus: var(--blue-600);
+
+  /* status: text colour + tint, each pair is contrast-checked */
+  --color-success: var(--green-800);
+  --color-success-bg: var(--green-100);
+  --color-warning: var(--amber-800);
+  --color-warning-bg: var(--amber-100);
+  --color-danger: var(--red-700);
+  --color-danger-bg: var(--red-100);
+  --color-info: var(--blue-700);
+  --color-info-bg: var(--blue-100);
+  --color-neutral: var(--gray-700);
+  --color-neutral-bg: var(--gray-100);
+
+  /* destructive button (Cancel booking, Reject listing) */
+  --color-danger-solid: var(--red-700);
+  --color-danger-solid-hover: var(--red-800);
+  --color-danger-solid-text: var(--gray-0);
+
+  /* misc */
+  --color-overlay: rgb(11 11 15 / 0.55);
+  --color-skeleton: var(--gray-100);
+  --color-skeleton-shine: var(--gray-50);
+
+  /* ---------- Typography ---------- */
+  --font-family: var(--font-sans, system-ui), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: clamp(1.5rem, 1.25rem + 1vw, 1.75rem);
+  --text-3xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+
+  /* ---------- Spacing: --space-N is N x 4px ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ---------- Shape ---------- */
+  --radius-sm: 8px;    /* badges, small buttons */
+  --radius-md: 12px;   /* inputs, buttons */
+  --radius-lg: 16px;   /* cards */
+  --radius-xl: 24px;   /* bottom sheets, hero cards */
+  --radius-pill: 999px;
+
+  --border-width: 1px;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+
+  /* ---------- Elevation ---------- */
+  --shadow-sm: 0 1px 2px rgb(11 11 15 / 0.06);
+  --shadow-md: 0 4px 16px rgb(11 11 15 / 0.08);
+  --shadow-lg: 0 12px 32px rgb(11 11 15 / 0.14);
+  --shadow-sheet: 0 -6px 24px rgb(11 11 15 / 0.12); /* sticky Book Now bar, bottom sheets */
+
+  /* ---------- Layering ---------- */
+  --z-base: 0;
+  --z-sticky: 10;     /* top bar, sticky booking bar */
+  --z-bottom-nav: 20;
+  --z-dropdown: 30;
+  --z-sheet: 40;      /* filter bottom sheet and its overlay */
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-skip-link: 100;
+
+  /* ---------- Motion ---------- */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ---------- Layout (mobile-first values) ---------- */
+  --tap: 44px;                       /* minimum touch target */
+  --gutter: var(--space-4);          /* page side padding */
+  --content-max: 1200px;
+  --content-narrow: 640px;           /* forms, sign-in, checkout */
+  --topbar-h: 56px;
+  --bottom-nav-h: 64px;              /* 0 from md up */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@media (min-width: 640px) {
+  :root { --gutter: var(--space-6); }
+}
+@media (min-width: 768px) {
+  :root { --bottom-nav-h: 0px; --topbar-h: 64px; }
+}
+@media (min-width: 1024px) {
+  :root { --gutter: var(--space-8); }
+}
+
+/* ---------- Dark surface remap ---------- */
+[data-surface="dark"] {
+  color-scheme: dark;
+
+  --color-bg: var(--gray-950);
+  --color-surface: var(--gray-900);
+  --color-surface-muted: var(--gray-800);
+  --color-surface-sunken: var(--gray-950);
+
+  --color-text: var(--gray-0);
+  --color-text-muted: var(--gray-400);
+
+  --color-border: var(--gray-800);
+  --color-border-control: var(--gray-500);
+
+  --color-action: var(--gray-0);          /* white button on a dark hero */
+  --color-action-hover: var(--gray-100);
+  --color-action-text: var(--gray-950);
+
+  --color-accent-text: var(--amber-500);
+  --color-focus: var(--blue-400);
+
+  --color-skeleton: var(--gray-800);
+  --color-skeleton-shine: var(--gray-700);
+
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* ---------- Framework bridge (shadcn/ui aliases) -------------------------
+   shadcn components are generated against their own variable names. These
+   aliases point them at the semantic tokens above, so shadcn primitives pick
+   up the design system and the data-surface remap without being edited.
+
+   Declared in both scopes so direct `var(--border)` style references remap
+   inside dark surfaces too. Tailwind utilities are wired to the same aliases
+   in globals.css via `@theme inline`.
+   ------------------------------------------------------------------------ */
+:root,
+[data-surface="dark"] {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-action);
+  --primary-foreground: var(--color-action-text);
+  --secondary: var(--color-surface-muted);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-surface-muted);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-surface-sunken);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--color-danger-solid);
+  --border: var(--color-border);
+  --input: var(--color-border-control);
+  --ring: var(--color-focus);
+
+  --success: var(--color-success);
+  --success-bg: var(--color-success-bg);
+  --warning: var(--color-warning);
+  --warning-bg: var(--color-warning-bg);
+  --danger: var(--color-danger);
+  --danger-bg: var(--color-danger-bg);
+  --info: var(--color-info);
+  --info-bg: var(--color-info-bg);
+  --neutral: var(--color-neutral);
+  --neutral-bg: var(--color-neutral-bg);
+
+  --chart-1: var(--color-action);
+  --chart-2: var(--color-info);
+  --chart-3: var(--color-accent);
+  --chart-4: var(--color-success);
+  --chart-5: var(--color-danger);
+
+  --sidebar: var(--color-surface);
+  --sidebar-foreground: var(--color-text);
+  --sidebar-primary: var(--color-action);
+  --sidebar-primary-foreground: var(--color-action-text);
+  --sidebar-accent: var(--color-surface-muted);
+  --sidebar-accent-foreground: var(--color-text);
+  --sidebar-border: var(--color-border);
+  --sidebar-ring: var(--color-focus);
+
+  --radius: var(--radius-lg);
+
+  --elevation-sm: var(--shadow-sm);
+  --elevation-md: var(--shadow-md);
+  --elevation-lg: var(--shadow-lg);
+  --elevation-sheet: var(--shadow-sheet);
+}

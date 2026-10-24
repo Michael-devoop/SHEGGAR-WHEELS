@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { Geist } from "next/font/google";
 import Providers from "./providers";
 import "./globals.css";
 import {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0b0b0f",
+  themeColor: "#ffffff",
   // maximumScale / userScalable are intentionally omitted: users must be
   // able to zoom.
 };
@@ -48,7 +48,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body>
+      <body className="min-h-screen bg-background text-foreground font-sans antialiased">
         <a href="#main" className="skip-link">
           Skip to content
         </a>
