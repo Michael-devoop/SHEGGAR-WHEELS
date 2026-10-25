@@ -42,7 +42,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       <footer className="mt-12 border-t border-border bg-surface">
         <div className="shell flex flex-col gap-2 py-6 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between">
           <p>{SITE_NAME} — peer-to-peer car rental in Addis Ababa.</p>
-          <p>Demo build. Data is simulated and resets on refresh.</p>
+          <p>Demo build. Data is simulated and saved in this browser.</p>
         </div>
       </footer>
 
