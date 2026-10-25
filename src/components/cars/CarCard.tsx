@@ -17,14 +17,16 @@ export default function CarCard({
   car,
   rating,
   reviewCount,
+  href = `/cars/${car.id}`,
 }: {
   car: Car;
   rating: number | null;
   reviewCount: number;
+  href?: string;
 }) {
   return (
     <Link
-      href={`/cars/${car.id}`}
+      href={href}
       className="group flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition-colors hover:border-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-surface-2">

@@ -10,7 +10,11 @@ import {
   PAGE_SIZE,
   TRANSMISSIONS,
 } from "@/lib/constants";
-import type { Car, Transmission } from "@/types";
+import {
+  isCarAvailable,
+  isValidDateRange,
+} from "@/lib/domain/availability";
+import type { Booking, Car, ISODate, Transmission } from "@/types";
 
 export const CATALOGUE_SORTS = ["newest", "price-asc", "price-desc"] as const;
 
@@ -21,6 +25,8 @@ export interface CatalogueQuery {
   neighbourhood: string;
   transmission: Transmission | "";
   maxPrice: number | null;
+  startDate: ISODate | "";
+  endDate: ISODate | "";
   sort: CatalogueSort;
   page: number;
 }
@@ -40,6 +46,24 @@ const first = (value: string | string[] | undefined): string => {
   if (Array.isArray(value)) return value[0] ?? "";
   return value ?? "";
 };
+
+export function parseCatalogueDateRange(
+  params: RawParams,
+): Pick<CatalogueQuery, "startDate" | "endDate"> {
+  const startDate = first(params.startDate).trim();
+  const endDate = first(params.endDate).trim();
+
+  if (!startDate || !endDate || !isValidDateRange(startDate, endDate)) {
+    return { startDate: "", endDate: "" };
+  }
+
+  return { startDate, endDate };
+}
+
+/** True when the query carries a complete, usable rental range. */
+export function hasCatalogueDateRange(query: CatalogueQuery): boolean {
+  return Boolean(query.startDate && query.endDate);
+}
 
 /** Reads a query string into a safe, fully-defaulted catalogue query. */
 export function parseCatalogueQuery(params: RawParams): CatalogueQuery {
@@ -65,6 +89,7 @@ export function parseCatalogueQuery(params: RawParams): CatalogueQuery {
     neighbourhood: neighbourhood ?? "",
     transmission: transmission ?? "",
     maxPrice,
+    ...parseCatalogueDateRange(params),
     sort,
     page: Number.isFinite(rawPage) && rawPage >= 1 ? rawPage : 1,
   };
@@ -82,14 +107,21 @@ const byPrice =
 export function searchCars(
   cars: readonly Car[],
   query: CatalogueQuery,
+  bookings: readonly Booking[] = [],
 ): CatalogueResult {
   const needle = query.q.toLowerCase();
+  const datesActive = hasCatalogueDateRange(query);
 
   const matches = cars
     .filter((car) => car.status === "approved")
     .filter((car) => (query.neighbourhood ? car.neighbourhood === query.neighbourhood : true))
     .filter((car) => (query.transmission ? car.transmission === query.transmission : true))
     .filter((car) => (query.maxPrice === null ? true : car.pricePerDay <= query.maxPrice))
+    .filter((car) =>
+      datesActive
+        ? isCarAvailable(car, bookings, query.startDate, query.endDate)
+        : true,
+    )
     .filter((car) =>
       needle
         ? [car.make, car.model, car.neighbourhood, car.description]

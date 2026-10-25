@@ -5,19 +5,30 @@ import Link from "next/link";
 
 import CarCard from "@/components/cars/CarCard";
 import { PAGE_SIZE, STORAGE_KEYS } from "@/lib/constants";
+import { listBookings } from "@/lib/data/bookings";
 import { listCars } from "@/lib/data/cars";
 import {
   averageRatingForCar,
   listReviewsForCar,
 } from "@/lib/data/reviews";
-import { searchCars, type CatalogueQuery } from "@/lib/domain/catalogue";
+import {
+  hasCatalogueDateRange,
+  searchCars,
+  type CatalogueQuery,
+} from "@/lib/domain/catalogue";
+import { formatDate } from "@/lib/format";
 import { localStore } from "@/lib/storage/storage";
-import type { Car } from "@/types";
+import type { Booking, Car } from "@/types";
 
-const subscribe = (onChange: () => void): (() => void) =>
+const subscribeCars = (onChange: () => void): (() => void) =>
   localStore.subscribe(STORAGE_KEYS.cars, () => onChange());
 
-const getSnapshot = (): string => JSON.stringify(listCars());
+const subscribeBookings = (onChange: () => void): (() => void) =>
+  localStore.subscribe(STORAGE_KEYS.bookings, () => onChange());
+
+const getCarsSnapshot = (): string => JSON.stringify(listCars());
+
+const getBookingsSnapshot = (): string => JSON.stringify(listBookings());
 
 function catalogueHref(query: CatalogueQuery, page: number): string {
   const params = new URLSearchParams();
@@ -25,11 +36,23 @@ function catalogueHref(query: CatalogueQuery, page: number): string {
   if (query.neighbourhood) params.set("neighbourhood", query.neighbourhood);
   if (query.transmission) params.set("transmission", query.transmission);
   if (query.maxPrice !== null) params.set("maxPrice", String(query.maxPrice));
+  if (query.startDate) params.set("startDate", query.startDate);
+  if (query.endDate) params.set("endDate", query.endDate);
   if (query.sort !== "newest") params.set("sort", query.sort);
   if (page > 1) params.set("page", String(page));
 
   const search = params.toString();
   return search ? `/cars?${search}` : "/cars";
+}
+
+function carHref(car: Car, query: CatalogueQuery): string {
+  if (!hasCatalogueDateRange(query)) return `/cars/${car.id}`;
+
+  const params = new URLSearchParams({
+    startDate: query.startDate,
+    endDate: query.endDate,
+  });
+  return `/cars/${car.id}?${params.toString()}`;
 }
 
 /**
@@ -42,17 +65,26 @@ function catalogueHref(query: CatalogueQuery, page: number): string {
 export default function CatalogueResults({
   query,
   initialCars,
+  initialBookings,
 }: {
   query: CatalogueQuery;
   initialCars: Car[];
+  initialBookings: Booking[];
 }) {
-  const raw = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
+  const carsRaw = useSyncExternalStore(
+    subscribeCars,
+    getCarsSnapshot,
     () => JSON.stringify(initialCars),
   );
-  const cars = JSON.parse(raw) as Car[];
-  const result = searchCars(cars, query);
+  const bookingsRaw = useSyncExternalStore(
+    subscribeBookings,
+    getBookingsSnapshot,
+    () => JSON.stringify(initialBookings),
+  );
+  const cars = JSON.parse(carsRaw) as Car[];
+  const bookings = JSON.parse(bookingsRaw) as Booking[];
+  const result = searchCars(cars, query, bookings);
+  const datesActive = hasCatalogueDateRange(query);
 
   const firstOnPage = result.total === 0 ? 0 : (result.page - 1) * PAGE_SIZE + 1;
   const lastOnPage = (result.page - 1) * PAGE_SIZE + result.cars.length;
@@ -63,7 +95,9 @@ export default function CatalogueResults({
         <h2 id="results" className="text-lg font-bold tracking-tight text-ink">
           {result.total === 0
             ? "No cars match"
-            : `${result.total} car${result.total === 1 ? "" : "s"} available`}
+            : datesActive
+              ? `${result.total} car${result.total === 1 ? "" : "s"} free for your dates`
+              : `${result.total} car${result.total === 1 ? "" : "s"} available`}
         </h2>
         {result.total > 0 ? (
           <p className="text-sm text-ink-muted" aria-live="polite">
@@ -72,11 +106,19 @@ export default function CatalogueResults({
         ) : null}
       </div>
 
+      {datesActive ? (
+        <p className="mt-1 text-sm text-ink-muted">
+          Free from {formatDate(query.startDate)} to {formatDate(query.endDate)}
+        </p>
+      ) : null}
+
       {result.cars.length === 0 ? (
         <div className="mt-4 rounded-lg border border-border bg-surface p-6">
           <p className="font-semibold text-ink">Nothing matches those filters.</p>
           <p className="mt-1 text-sm text-ink-muted">
-            Try a wider price range or another neighbourhood.
+            {datesActive
+              ? "Try different dates, a wider price range or another neighbourhood."
+              : "Try a wider price range or another neighbourhood."}
           </p>
           <Link
             href="/cars"
@@ -95,6 +137,7 @@ export default function CatalogueResults({
                   car={car}
                   rating={averageRatingForCar(car.id)}
                   reviewCount={reviews.length}
+                  href={carHref(car, query)}
                 />
               </li>
             );

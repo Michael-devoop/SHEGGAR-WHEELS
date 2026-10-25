@@ -28,7 +28,12 @@ const LABEL = "text-sm font-medium text-ink";
  */
 export default function CarFilters({ query }: { query: CatalogueQuery }) {
   const active = Boolean(
-    query.q || query.neighbourhood || query.transmission || query.maxPrice,
+    query.q ||
+      query.neighbourhood ||
+      query.transmission ||
+      query.maxPrice ||
+      query.startDate ||
+      query.endDate,
   );
 
   return (
@@ -63,6 +68,42 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
           placeholder="Make, model or feature"
           className={FIELD}
         />
+      </div>
+
+      <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          <div className="space-y-1.5">
+            <label htmlFor="startDate" className={LABEL}>
+              Pickup date
+            </label>
+            <input
+              id="startDate"
+              name="startDate"
+              type="date"
+              defaultValue={query.startDate}
+              aria-describedby="date-hint"
+              className={FIELD}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="endDate" className={LABEL}>
+              Return date
+            </label>
+            <input
+              id="endDate"
+              name="endDate"
+              type="date"
+              defaultValue={query.endDate}
+              min={query.startDate || undefined}
+              aria-describedby="date-hint"
+              className={FIELD}
+            />
+          </div>
+        </div>
+        <p id="date-hint" className="text-xs text-ink-muted">
+          Add both dates to see only cars that are free for your trip.
+        </p>
       </div>
 
       <div className="space-y-1.5">

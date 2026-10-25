@@ -32,11 +32,24 @@ const FIELD =
  * pure functions the action uses, so the preview cannot disagree with what is
  * saved. The action still re-checks everything.
  */
-export default function CheckoutForm({ car }: { car: Car }) {
+export default function CheckoutForm({
+  car,
+  initialStartDate = "",
+  initialEndDate = "",
+}: {
+  car: Car;
+  initialStartDate?: ISODate | "";
+  initialEndDate?: ISODate | "";
+}) {
   const router = useRouter();
   const { user, hydrated } = useCurrentUser();
-  const [startDate, setStartDate] = useState<ISODate>(() => isoOffset(1));
-  const [endDate, setEndDate] = useState<ISODate>(() => isoOffset(3));
+  const hasInitialDates = isValidDateRange(initialStartDate, initialEndDate);
+  const [startDate, setStartDate] = useState<ISODate>(() =>
+    hasInitialDates ? initialStartDate : isoOffset(1),
+  );
+  const [endDate, setEndDate] = useState<ISODate>(() =>
+    hasInitialDates ? initialEndDate : isoOffset(3),
+  );
   const [error, setError] = useState<string | null>(null);
 
   const today = isoOffset(0);

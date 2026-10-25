@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 
 import CarFilters from "@/components/cars/CarFilters";
 import CatalogueResults from "@/components/cars/CatalogueResults";
+import { listBookings } from "@/lib/data/bookings";
 import { listCars } from "@/lib/data/cars";
 import { parseCatalogueQuery } from "@/lib/domain/catalogue";
 
 export const metadata: Metadata = {
   title: "Browse cars",
   description:
-    "Approved cars for rent in Addis Ababa, filtered by neighbourhood, transmission and daily price.",
+    "Approved cars for rent in Addis Ababa, filtered by trip dates, neighbourhood, transmission and daily price.",
 };
 
 export default async function Page({
@@ -36,7 +37,11 @@ export default async function Page({
           <CarFilters query={query} />
         </aside>
 
-        <CatalogueResults query={query} initialCars={listCars()} />
+        <CatalogueResults
+          query={query}
+          initialCars={listCars()}
+          initialBookings={listBookings()}
+        />
       </div>
     </div>
   );

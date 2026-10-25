@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import CheckoutForm from "@/components/bookings/CheckoutForm";
 import { getCarById } from "@/lib/data/cars";
+import { parseCatalogueDateRange } from "@/lib/domain/catalogue";
 
 export const metadata: Metadata = {
   title: "Request a booking",
@@ -18,6 +19,7 @@ export default async function Page({
   const raw = params.carId;
   const carId = Array.isArray(raw) ? raw[0] : raw;
   const car = carId ? getCarById(carId) : null;
+  const dates = parseCatalogueDateRange(params);
 
   if (!car) {
     return (
@@ -72,7 +74,11 @@ export default async function Page({
 
   return (
     <div className="shell py-8 sm:py-10">
-      <CheckoutForm car={car} />
+      <CheckoutForm
+        car={car}
+        initialStartDate={dates.startDate}
+        initialEndDate={dates.endDate}
+      />
     </div>
   );
 }

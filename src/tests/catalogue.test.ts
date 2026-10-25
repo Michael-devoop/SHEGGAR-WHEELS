@@ -6,7 +6,7 @@ import {
   searchCars,
   type CatalogueQuery,
 } from "@/lib/domain/catalogue";
-import type { Car, CarStatus } from "@/types";
+import type { Booking, Car, CarStatus } from "@/types";
 
 function makeCar(overrides: Partial<Car> = {}): Car {
   return {
@@ -31,11 +31,34 @@ function makeCar(overrides: Partial<Car> = {}): Car {
   };
 }
 
+function makeBooking(overrides: Partial<Booking> = {}): Booking {
+  return {
+    id: "bkg_test",
+    carId: "car_test",
+    renterId: "usr_renter",
+    ownerId: "usr_owner",
+    startDate: "2026-11-20",
+    endDate: "2026-11-22",
+    days: 2,
+    pricePerDay: 1500,
+    subtotal: 3000,
+    fee: 300,
+    total: 3300,
+    paymentStatus: "held",
+    status: "confirmed",
+    createdAt: "2026-11-01T09:00:00.000Z",
+    updatedAt: "2026-11-01T09:00:00.000Z",
+    ...overrides,
+  };
+}
+
 const query = (overrides: Partial<CatalogueQuery> = {}): CatalogueQuery => ({
   q: "",
   neighbourhood: "",
   transmission: "",
   maxPrice: null,
+  startDate: "",
+  endDate: "",
   sort: "newest",
   page: 1,
   ...overrides,
@@ -84,6 +107,23 @@ describe("parseCatalogueQuery", () => {
     });
 
     expect(parsed).toEqual(query());
+  });
+
+  it("keeps a complete, valid date range", () => {
+    expect(
+      parseCatalogueQuery({ startDate: "2026-11-20", endDate: "2026-11-22" }),
+    ).toEqual(query({ startDate: "2026-11-20", endDate: "2026-11-22" }));
+  });
+
+  it("drops incomplete, impossible or reversed dates", () => {
+    expect(parseCatalogueQuery({ startDate: "2026-11-20" })).toEqual(query());
+    expect(parseCatalogueQuery({ endDate: "2026-11-22" })).toEqual(query());
+    expect(
+      parseCatalogueQuery({ startDate: "2026-02-30", endDate: "2026-03-02" }),
+    ).toEqual(query());
+    expect(
+      parseCatalogueQuery({ startDate: "2026-11-22", endDate: "2026-11-20" }),
+    ).toEqual(query());
   });
 });
 
@@ -167,6 +207,48 @@ describe("searchCars", () => {
       "car_mid",
       "car_old_cheap",
     ]);
+  });
+
+  it("only shows cars free for the requested dates", () => {
+    const cars = [
+      makeCar({ id: "car_free" }),
+      makeCar({ id: "car_booked" }),
+      makeCar({
+        id: "car_blocked",
+        unavailableDates: ["2026-11-21"],
+      }),
+    ];
+    const bookings = [makeBooking({ carId: "car_booked" })];
+
+    expect(
+      searchCars(
+        cars,
+        query({ startDate: "2026-11-20", endDate: "2026-11-22" }),
+        bookings,
+      ).cars.map((car) => car.id),
+    ).toEqual(["car_free"]);
+  });
+
+  it("does not filter by dates when the range is absent", () => {
+    const cars = [makeCar({ id: "car_free" }), makeCar({ id: "car_booked" })];
+    const bookings = [makeBooking({ carId: "car_booked" })];
+
+    expect(searchCars(cars, query(), bookings).total).toBe(2);
+  });
+
+  it("ignores cancelled bookings when filtering by dates", () => {
+    const cars = [makeCar({ id: "car_free" })];
+    const bookings = [
+      makeBooking({ carId: "car_free", status: "cancelled" }),
+    ];
+
+    expect(
+      searchCars(
+        cars,
+        query({ startDate: "2026-11-20", endDate: "2026-11-22" }),
+        bookings,
+      ).cars.map((car) => car.id),
+    ).toEqual(["car_free"]);
   });
 
   it("pages through the result and clamps an out-of-range page", () => {

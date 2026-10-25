@@ -21,7 +21,7 @@ import { listReviews } from "@/lib/data/reviews";
 import { getUserById } from "@/lib/data/users";
 import { formatDate, formatETB } from "@/lib/format";
 import { localStore } from "@/lib/storage/storage";
-import type { Car, Review } from "@/types";
+import type { Car, ISODate, Review } from "@/types";
 
 const subscribeCars = (onChange: () => void): (() => void) =>
   localStore.subscribe(STORAGE_KEYS.cars, () => onChange());
@@ -40,10 +40,14 @@ export default function StoredCarDetail({
   carId,
   initialCar,
   initialReviews,
+  initialStartDate = "",
+  initialEndDate = "",
 }: {
   carId: string;
   initialCar: Car | null;
   initialReviews: Review[];
+  initialStartDate?: ISODate | "";
+  initialEndDate?: ISODate | "";
 }) {
   const hydrated = useHydrated();
 
@@ -103,6 +107,13 @@ export default function StoredCarDetail({
             10,
         ) / 10;
   const bookable = car.status === "approved";
+
+  const checkoutParams = new URLSearchParams({ carId: car.id });
+  if (initialStartDate && initialEndDate) {
+    checkoutParams.set("startDate", initialStartDate);
+    checkoutParams.set("endDate", initialEndDate);
+  }
+  const checkoutHref = `/renter/checkout?${checkoutParams.toString()}`;
 
   return (
     <div className="shell py-5 lg:py-8">
@@ -302,9 +313,7 @@ export default function StoredCarDetail({
 
             {bookable ? (
               <Button asChild className="mt-4 h-11 w-full">
-                <Link href={`/renter/checkout?carId=${car.id}`}>
-                  Request to book
-                </Link>
+                <Link href={checkoutHref}>Request to book</Link>
               </Button>
             ) : (
               <p className="mt-4 rounded-md bg-warning-bg px-3 py-2 text-sm text-warning">
