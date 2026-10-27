@@ -127,20 +127,25 @@ export default function Home() {
       </section>
 
       {/* How it works --------------------------------------------------- */}
-      <section id="how-it-works" aria-labelledby="how-it-works-heading" className="bg-surface">
+      <section
+        id="how-it-works"
+        aria-labelledby="how-it-works-heading"
+        data-surface="dark"
+        className="scroll-mt-24 bg-surface-inverse"
+      >
         <div className="shell py-20">
           {/* Header */}
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-ink-muted">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-ink-muted">
               How it Works
             </p>
             <h2
               id="how-it-works-heading"
-              className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl"
+              className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl"
             >
               From search to road in three steps
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-ink-muted sm:text-base">
+            <p className="mt-3 text-base leading-relaxed text-ink-muted sm:text-lg">
               No dealership, no hidden fees, no waiting —
               just peer-to-peer car rental you can trust.
             </p>
@@ -154,7 +159,7 @@ export default function Home() {
             {STEPS.map((step, index) => (
               <li
                 key={step.title}
-                className="relative flex flex-col gap-4 rounded-2xl border border-border bg-bg p-6 transition-shadow hover:shadow-md"
+                className="relative flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6 transition-shadow hover:shadow-md"
               >
                 {/* Icon + step number */}
                 <div className="flex items-center justify-between">
@@ -169,16 +174,16 @@ export default function Home() {
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
                     )}
                   </span>
-                  <span className="text-sm font-medium text-ink-muted">
+                  <span className="text-base font-medium text-ink-muted">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </div>
 
                 {/* Text */}
-                <h3 className="text-base font-bold tracking-tight">
+                <h3 className="text-lg font-bold tracking-tight">
                   {step.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-ink-muted">
+                <p className="text-base leading-relaxed text-ink-muted">
                   {step.body}
                 </p>
               </li>
@@ -189,7 +194,7 @@ export default function Home() {
           <div className="mt-10 flex justify-center">
             <Link
               href="/cars"
-              className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-base font-semibold text-on-primary transition-opacity hover:opacity-90"
             >
               Get started
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
