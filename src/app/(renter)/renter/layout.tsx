@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import Navbar from "@/components/layout/Navbar";
-import RoleGuard from "@/components/layout/RoleGuard";
 import SessionMenu from "@/components/auth/SessionMenu";
 
 const NAV = [
@@ -19,7 +18,7 @@ export default function RenterLayout({ children }: { children: ReactNode }) {
         actions={<SessionMenu />}
       />
       <main id="main" className="flex-1">
-        <RoleGuard area="renter">{children}</RoleGuard>
+        {children}
       </main>
     </div>
   );

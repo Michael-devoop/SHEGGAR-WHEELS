@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import CheckoutForm from "@/components/bookings/CheckoutForm";
+import RoleGuard from "@/components/layout/RoleGuard";
 import { getCarById } from "@/lib/data/cars";
 import { parseCatalogueDateRange } from "@/lib/domain/catalogue";
 
@@ -104,8 +105,10 @@ async function CheckoutContent({ searchParams }: CheckoutPageProps) {
 
 export default function Page(props: CheckoutPageProps) {
   return (
-    <Suspense fallback={<CheckoutLoading />}>
-      <CheckoutContent {...props} />
-    </Suspense>
+    <RoleGuard area="renter">
+      <Suspense fallback={<CheckoutLoading />}>
+        <CheckoutContent {...props} />
+      </Suspense>
+    </RoleGuard>
   );
 }

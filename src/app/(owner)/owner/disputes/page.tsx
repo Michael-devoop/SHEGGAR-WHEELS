@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import OwnerDisputes from "@/components/disputes/OwnerDisputes";
+import RoleGuard from "@/components/layout/RoleGuard";
 
 export const metadata: Metadata = {
   title: "Disputes",
@@ -9,8 +10,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="shell py-8 sm:py-10">
-      <OwnerDisputes />
-    </div>
+    <RoleGuard area="owner">
+      <div className="shell py-8 sm:py-10">
+        <OwnerDisputes />
+      </div>
+    </RoleGuard>
   );
 }

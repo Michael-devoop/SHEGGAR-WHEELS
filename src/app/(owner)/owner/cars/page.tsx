@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import OwnerCars from "@/components/cars/OwnerCars";
+import RoleGuard from "@/components/layout/RoleGuard";
 
 export const metadata: Metadata = {
   title: "My cars",
@@ -9,8 +10,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="shell py-8 sm:py-10">
-      <OwnerCars />
-    </div>
+    <RoleGuard area="owner">
+      <div className="shell py-8 sm:py-10">
+        <OwnerCars />
+      </div>
+    </RoleGuard>
   );
 }

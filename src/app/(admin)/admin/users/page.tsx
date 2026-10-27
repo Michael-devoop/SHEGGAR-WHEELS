@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import AdminUsers from "@/components/admin/AdminUsers";
+import RoleGuard from "@/components/layout/RoleGuard";
 
 export const metadata: Metadata = {
   title: "Accounts",
@@ -9,8 +10,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="shell py-8 sm:py-10">
-      <AdminUsers />
-    </div>
+    <RoleGuard area="admin">
+      <div className="shell py-8 sm:py-10">
+        <AdminUsers />
+      </div>
+    </RoleGuard>
   );
 }
