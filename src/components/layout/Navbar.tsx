@@ -31,10 +31,14 @@ export default function Navbar({
       <div className="shell flex flex-wrap items-center gap-x-3 py-1">
         <Link
           href={brandHref}
-          className="order-1 flex min-h-11 shrink-0 items-center gap-2 text-base font-bold tracking-tight text-ink"
+          className="order-1 flex min-h-11 shrink-0 items-center"
         >
-          <span aria-hidden="true" className="size-2.5 rounded-pill bg-highlight" />
-          {brand}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/sheggar-wheels-logo.webp"
+            alt={brand}
+            className="h-8 w-auto object-contain sm:h-10"
+          />
         </Link>
 
         {/* On phones the nav wraps onto its own scrollable row so the brand
