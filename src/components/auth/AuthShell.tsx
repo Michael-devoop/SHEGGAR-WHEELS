@@ -35,9 +35,9 @@ export default function AuthShell({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/SHEGGAR_WHEELS_Automotive_Logo-removebg-preview.webp"
+              src="/sheggar-wheels-logo.webp"
               alt="Sheggar Wheels"
-              className="h-9 sm:h-10 w-auto object-contain"
+              className="h-11 w-auto object-contain sm:h-12"
               style={{ filter: "brightness(0)" }}
             />
           </Link>

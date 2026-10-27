@@ -75,9 +75,7 @@ export function buildOrganizationStructuredData(): JsonLdObject {
     name: SITE_NAME,
     url: SITE_URL,
     description: SITE_DESCRIPTION,
-    logo: absoluteUrl(
-      "/SHEGGAR_WHEELS_Automotive_Logo-removebg-preview.webp",
-    ),
+    logo: absoluteUrl("/sheggar-wheels-logo.webp"),
     areaServed: { "@type": "City", name: "Addis Ababa" },
   };
 }

@@ -128,9 +128,9 @@ function SheggarLogo({ dark = false }: { dark?: boolean }) {
   return (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src="/SHEGGAR_WHEELS_Automotive_Logo-removebg-preview.webp"
+      src="/sheggar-wheels-logo.webp"
       alt="Sheggar Wheels"
-      className="h-10 w-auto object-contain transition-all duration-300 sm:h-12"
+      className="h-10 w-auto object-contain transition-all duration-300 sm:h-11 lg:h-10 xl:h-11"
       style={{
         filter: dark ? "brightness(0)" : "brightness(0) invert(1)",
       }}
@@ -291,7 +291,7 @@ function HeaderShell() {
 
         {/* Centred pill navbar — all items inside */}
         <div
-          className="absolute left-1/2 top-0 w-[780px] -translate-x-1/2"
+          className="absolute left-1/2 top-0 w-[560px] -translate-x-1/2 xl:w-[780px]"
           style={{
             filter: "drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35))",
           }}
