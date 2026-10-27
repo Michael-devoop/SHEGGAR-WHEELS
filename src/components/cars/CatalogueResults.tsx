@@ -92,7 +92,7 @@ export default function CatalogueResults({
   return (
     <section aria-labelledby="results">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="results" className="text-lg font-bold tracking-tight text-ink">
+        <h2 id="results" className="text-xl font-bold tracking-tight text-zinc-900">
           {result.total === 0
             ? "No cars match"
             : datesActive
@@ -100,7 +100,7 @@ export default function CatalogueResults({
               : `${result.total} car${result.total === 1 ? "" : "s"} available`}
         </h2>
         {result.total > 0 ? (
-          <p className="text-sm text-ink-muted" aria-live="polite">
+          <p className="text-sm text-zinc-400" aria-live="polite">
             Showing {firstOnPage}–{lastOnPage} of {result.total}
           </p>
         ) : null}
@@ -113,22 +113,22 @@ export default function CatalogueResults({
       ) : null}
 
       {result.cars.length === 0 ? (
-        <div className="mt-4 rounded-lg border border-border bg-surface p-6">
-          <p className="font-semibold text-ink">Nothing matches those filters.</p>
-          <p className="mt-1 text-sm text-ink-muted">
+        <div className="mt-6 rounded-2xl border border-zinc-100 bg-white p-8 text-center shadow-sm">
+          <p className="text-lg font-semibold text-zinc-900">No cars found</p>
+          <p className="mt-1 text-sm text-zinc-500">
             {datesActive
               ? "Try different dates, a wider price range or another neighbourhood."
               : "Try a wider price range or another neighbourhood."}
           </p>
           <Link
             href="/cars"
-            className="mt-4 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
+            className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-zinc-900 px-5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700"
           >
             Clear all filters
           </Link>
         </div>
       ) : (
-        <ul role="list" className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <ul role="list" className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {result.cars.map((car) => {
             const reviews = listReviewsForCar(car.id);
             return (
@@ -148,35 +148,73 @@ export default function CatalogueResults({
       {result.pageCount > 1 ? (
         <nav
           aria-label="Catalogue pages"
-          className="mt-8 flex items-center justify-between border-t border-border pt-4"
+          className="mt-8 flex items-center justify-center gap-1 border-t border-border pt-6"
         >
+          {/* Previous */}
           {result.hasPrevious ? (
             <Link
               href={catalogueHref(query, result.page - 1)}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-surface-2"
+              className="inline-flex size-10 items-center justify-center rounded-lg border border-border text-sm font-medium text-ink transition-colors hover:bg-surface-2"
+              aria-label="Previous page"
             >
-              ← Previous
+              ←
             </Link>
           ) : (
-            <span className="inline-flex min-h-11 items-center px-4 text-sm text-ink-muted">
-              ← Previous
+            <span className="inline-flex size-10 items-center justify-center rounded-lg text-sm text-ink-muted/40">
+              ←
             </span>
           )}
 
-          <p className="text-sm text-ink-muted">
-            Page {result.page} of {result.pageCount}
-          </p>
+          {/* Page numbers */}
+          {Array.from({ length: result.pageCount }, (_, i) => i + 1)
+            .filter((p) => {
+              if (p === 1 || p === result.pageCount) return true;
+              if (Math.abs(p - result.page) <= 1) return true;
+              return false;
+            })
+            .reduce<(number | "ellipsis")[]>((acc, p, idx, arr) => {
+              if (idx > 0 && p - (arr[idx - 1] as number) > 1) {
+                acc.push("ellipsis");
+              }
+              acc.push(p);
+              return acc;
+            }, [])
+            .map((item, idx) =>
+              item === "ellipsis" ? (
+                <span
+                  key={`ellipsis-${idx}`}
+                  className="inline-flex size-10 items-center justify-center text-sm text-ink-muted"
+                >
+                  …
+                </span>
+              ) : (
+                <Link
+                  key={item}
+                  href={catalogueHref(query, item)}
+                  aria-current={item === result.page ? "page" : undefined}
+                  className={`inline-flex size-10 items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                    item === result.page
+                      ? "bg-zinc-900 text-white"
+                      : "border border-border text-ink hover:bg-surface-2"
+                  }`}
+                >
+                  {item}
+                </Link>
+              )
+            )}
 
+          {/* Next */}
           {result.hasNext ? (
             <Link
               href={catalogueHref(query, result.page + 1)}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-surface-2"
+              className="inline-flex size-10 items-center justify-center rounded-lg border border-border text-sm font-medium text-ink transition-colors hover:bg-surface-2"
+              aria-label="Next page"
             >
-              Next →
+              →
             </Link>
           ) : (
-            <span className="inline-flex min-h-11 items-center px-4 text-sm text-ink-muted">
-              Next →
+            <span className="inline-flex size-10 items-center justify-center rounded-lg text-sm text-ink-muted/40">
+              →
             </span>
           )}
         </nav>

@@ -312,3 +312,252 @@
     top: var(--space-3);
   }
 }
+
+/* ==========================================================================
+   Hero — scroll-controlled car animation
+   --------------------------------------------------------------------------
+   Structure:
+     .hero-section            relative container, full-width
+       .hero-scroll-wrapper   ~300vh tall scroll track
+         .hero-scroll-sticky  sticky viewport
+           .hero-scroll-canvas  fills the sticky viewport
+       .hero-overlay          gradient layers (pointer-events: none)
+       .hero-content           sticky text + CTAs
+   ========================================================================== */
+
+@layer components {
+  /* ---- scroll track ---------------------------------------------------- */
+  .hero-scroll-wrapper {
+    position: relative;
+    height: 300vh;          /* scroll runway for 224 frames */
+    width: 100%;
+  }
+
+  .hero-scroll-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--gray-950);
+  }
+
+  .hero-scroll-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  /* ---- section container ----------------------------------------------- */
+  .hero-section {
+    position: relative;
+    width: 100%;
+    background-color: var(--gray-950);
+    color: var(--gray-0);
+    /* Pull the hero into the page flow without extra margin */
+    margin: 0;
+  }
+
+  /* ---- gradient overlays ----------------------------------------------- */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .hero-gradient-top {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgb(11 11 15 / 0.85) 0%,
+      rgb(11 11 15 / 0.45) 25%,
+      transparent 55%
+    );
+  }
+
+  .hero-gradient-bottom {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgb(11 11 15 / 0.9) 0%,
+      rgb(11 11 15 / 0.4) 30%,
+      transparent 60%
+    );
+  }
+
+  .hero-gradient-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 40%,
+      rgb(11 11 15 / 0.5) 100%
+    );
+  }
+
+  /* ---- text content ---------------------------------------------------- */
+  .hero-content {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: clamp(4rem, 12vh, 8rem);
+  }
+
+  .hero-content-inner {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: 640px;
+  }
+
+  /* On desktop shift text to the left for a cinematic split layout */
+  @media (min-width: 1024px) {
+    .hero-content {
+      align-items: center;
+      padding-bottom: 0;
+    }
+    .hero-content-inner {
+      padding-block: var(--space-8);
+    }
+  }
+
+  /* ---- typography ------------------------------------------------------- */
+  .hero-eyebrow {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: rgb(255 255 255 / 0.5);
+  }
+
+  .hero-headline {
+    font-size: clamp(2.25rem, 2rem + 4vw, 5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: rgb(255 255 255 / 0.95);
+    text-shadow: 0 2px 40px rgb(0 0 0 / 0.5);
+  }
+
+  .hero-subheadline {
+    font-size: clamp(0.95rem, 0.85rem + 0.5vw, 1.25rem);
+    color: rgb(255 255 255 / 0.6);
+    max-width: 36ch;
+    line-height: var(--leading-normal);
+  }
+
+  /* ---- CTA buttons ----------------------------------------------------- */
+  .hero-cta-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+  }
+
+  .hero-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding-inline: var(--space-8);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gray-950);
+    background-color: var(--gray-0);
+    border-radius: var(--radius-sm);
+    transition: opacity var(--duration-base) var(--ease-out),
+                transform var(--duration-base) var(--ease-out);
+  }
+  .hero-cta-primary:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+
+  .hero-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding-inline: var(--space-8);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.85);
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--duration-base) var(--ease-out),
+                border-color var(--duration-base) var(--ease-out),
+                transform var(--duration-base) var(--ease-out);
+  }
+  .hero-cta-secondary:hover {
+    background-color: rgb(255 255 255 / 0.08);
+    border-color: rgb(255 255 255 / 0.35);
+    transform: translateY(-1px);
+  }
+
+  /* Stack CTAs on narrow screens */
+  @media (max-width: 480px) {
+    .hero-cta-group {
+      flex-direction: column;
+    }
+    .hero-cta-primary,
+    .hero-cta-secondary {
+      width: 100%;
+    }
+  }
+
+  /* ---- scroll hint ------------------------------------------------------ */
+  .hero-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+  }
+
+  .hero-scroll-hint-line {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, rgb(255 255 255 / 0.4), transparent);
+    animation: hero-pulse 2s ease-in-out infinite;
+  }
+
+  .hero-scroll-hint-label {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgb(255 255 255 / 0.35);
+  }
+
+  @keyframes hero-pulse {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 1; }
+  }
+
+  /* Reduced-motion: kill the scroll hint animation */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-scroll-hint-line {
+      animation: none;
+      opacity: 0.5;
+    }
+    /* Collapse the scroll runway so the page is a normal height */
+    .hero-scroll-wrapper {
+      height: 100vh;
+    }
+  }
+}

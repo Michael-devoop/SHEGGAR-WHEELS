@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Search, SlidersHorizontal } from "lucide-react";
 
 import {
   NEIGHBOURHOODS,
@@ -11,21 +12,14 @@ import {
 
 const SORT_LABEL: Record<(typeof CATALOGUE_SORTS)[number], string> = {
   newest: "Newest first",
-  "price-asc": "Price: low to high",
-  "price-desc": "Price: high to low",
+  "price-asc": "Price: low → high",
+  "price-desc": "Price: high → low",
 };
 
 const FIELD =
-  "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-ink outline-none focus-visible:border-focus focus-visible:ring-2 focus-visible:ring-focus/30";
-const LABEL = "text-sm font-medium text-ink";
+  "min-h-11 w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3.5 text-sm text-zinc-900 outline-none transition-colors focus:border-zinc-400 focus:bg-white focus:ring-2 focus:ring-zinc-200";
+const LABEL = "text-xs font-semibold uppercase tracking-wider text-zinc-400";
 
-/**
- * Catalogue filters as a plain GET form.
- *
- * The form works without JavaScript and keeps the active search in the URL,
- * so a filtered view can be linked to and refreshed. The page does the
- * filtering on the server.
- */
 export default function CarFilters({ query }: { query: CatalogueQuery }) {
   const active = Boolean(
     query.q ||
@@ -40,41 +34,48 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
     <form
       action="/cars"
       method="get"
-      className="grid gap-4 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-1"
+      className="grid gap-5 rounded-2xl border border-zinc-100 bg-white p-5 shadow-sm sm:grid-cols-2 lg:grid-cols-1"
     >
+      {/* Header */}
       <div className="flex items-center justify-between gap-3 sm:col-span-2 lg:col-span-1">
-        <h2 className="text-sm font-bold uppercase tracking-widest text-ink-muted">
-          Filter cars
-        </h2>
+        <div className="flex items-center gap-2">
+          <SlidersHorizontal className="size-4 text-zinc-400" />
+          <h2 className="text-sm font-bold text-zinc-900">Filters</h2>
+        </div>
         {active ? (
           <Link
             href="/cars"
-            className="text-sm font-medium text-ink underline underline-offset-4"
+            className="text-xs font-medium text-zinc-500 underline underline-offset-4 transition-colors hover:text-zinc-900"
           >
-            Clear
+            Clear all
           </Link>
         ) : null}
       </div>
 
-      <div className="space-y-1.5">
+      {/* Search */}
+      <div className="space-y-2">
         <label htmlFor="q" className={LABEL}>
           Search
         </label>
-        <input
-          id="q"
-          name="q"
-          type="search"
-          defaultValue={query.q}
-          placeholder="Make, model or feature"
-          className={FIELD}
-        />
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
+          <input
+            id="q"
+            name="q"
+            type="search"
+            defaultValue={query.q}
+            placeholder="Make, model or feature"
+            className={`${FIELD} pl-9`}
+          />
+        </div>
       </div>
 
-      <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+      {/* Dates */}
+      <div className="space-y-2 sm:col-span-2 lg:col-span-1">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label htmlFor="startDate" className={LABEL}>
-              Pickup date
+              Pickup
             </label>
             <input
               id="startDate"
@@ -85,10 +86,9 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
               className={FIELD}
             />
           </div>
-
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label htmlFor="endDate" className={LABEL}>
-              Return date
+              Return
             </label>
             <input
               id="endDate"
@@ -101,14 +101,15 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
             />
           </div>
         </div>
-        <p id="date-hint" className="text-xs text-ink-muted">
-          Add both dates to see only cars that are free for your trip.
+        <p id="date-hint" className="text-[11px] text-zinc-400">
+          Add both dates to see only free cars.
         </p>
       </div>
 
-      <div className="space-y-1.5">
+      {/* Neighbourhood */}
+      <div className="space-y-2">
         <label htmlFor="neighbourhood" className={LABEL}>
-          Neighbourhood
+          Area
         </label>
         <select
           id="neighbourhood"
@@ -116,7 +117,7 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
           defaultValue={query.neighbourhood}
           className={FIELD}
         >
-          <option value="">All neighbourhoods</option>
+          <option value="">All areas</option>
           {NEIGHBOURHOODS.map((area) => (
             <option key={area} value={area}>
               {area}
@@ -125,7 +126,8 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
         </select>
       </div>
 
-      <div className="space-y-1.5">
+      {/* Transmission */}
+      <div className="space-y-2">
         <label htmlFor="transmission" className={LABEL}>
           Transmission
         </label>
@@ -135,7 +137,7 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
           defaultValue={query.transmission}
           className={FIELD}
         >
-          <option value="">Any transmission</option>
+          <option value="">Any</option>
           {TRANSMISSIONS.map((type) => (
             <option key={type} value={type}>
               {type === "automatic" ? "Automatic" : "Manual"}
@@ -144,9 +146,10 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
         </select>
       </div>
 
-      <div className="space-y-1.5">
+      {/* Max price */}
+      <div className="space-y-2">
         <label htmlFor="maxPrice" className={LABEL}>
-          Max price per day (ETB)
+          Max price / day
         </label>
         <input
           id="maxPrice"
@@ -161,7 +164,8 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
         />
       </div>
 
-      <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+      {/* Sort */}
+      <div className="space-y-2 sm:col-span-2 lg:col-span-1">
         <label htmlFor="sort" className={LABEL}>
           Sort by
         </label>
@@ -179,9 +183,10 @@ export default function CarFilters({ query }: { query: CatalogueQuery }) {
         </select>
       </div>
 
+      {/* Submit */}
       <button
         type="submit"
-        className="inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 sm:col-span-2 lg:col-span-1"
+        className="inline-flex min-h-11 items-center justify-center rounded-xl bg-zinc-900 px-4 text-sm font-semibold text-white transition-colors hover:bg-zinc-700 sm:col-span-2 lg:col-span-1"
       >
         Apply filters
       </button>
