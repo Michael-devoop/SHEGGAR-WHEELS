@@ -96,7 +96,7 @@ Key decisions:
 - Reads go through `lib/data`; every stored collection falls back to seed data when missing or invalid.
 - Mutations go through `lib/actions`, which validate role, ownership, state transitions, dates, and prices before writing.
 - Domain rules are pure and shared by forms, actions, and tests.
-- Lists subscribe to storage with `useSyncExternalStore`, so changes in one tab update the UI immediately.
+- Collection hooks use TanStack Query with 15-second polling. Storage writes invalidate the matching query immediately, so the UI updates without waiting for the poll.
 
 More detail: [`DATA.md`](./DATA.md), [`BOUNDARY.md`](./BOUNDARY.md), and [`PERF.md`](./PERF.md).
 

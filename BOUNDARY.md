@@ -31,7 +31,7 @@ There are 59 files with `"use client"` at the time of writing. They fall into fi
 | Group | Examples | Why the client is required |
 | --- | --- | --- |
 | Session and auth | `SessionMenu`, `SignInForm`, `SignUpForm`, `SignOutButton`, `RoleGuard` | Reads `sessionStorage`, handles form events and navigation |
-| Storage-backed screens | `CatalogueResults`, `StoredCarDetail`, `useCars`, `useBookings`, `useReviews`, `useDisputes`, `useUsers`, `useAnnouncements` | Subscribes to browser storage with `useSyncExternalStore` |
+| Storage-backed screens | `CatalogueResults`, `StoredCarDetail`, `useCars`, `useBookings`, `useReviews`, `useDisputes`, `useUsers`, `useAnnouncements` | Subscribes to browser storage; dashboard hooks use TanStack Query with polling, while the public catalogue uses `useSyncExternalStore` |
 | Mutating forms | `CheckoutForm`, `CarForm`, `ReviewForm`, `OpenDisputeForm`, `AdminAnnouncements` | Controlled inputs, validation feedback, and action calls |
 | Booking and dashboard UI | `BookingDetail`, `TripTracker`, `OwnerBookingRequests`, `RenterDashboard`, `OwnerDashboard`, `OwnerEarnings` | Reads live records, filters by the signed-in user, and triggers transitions |
 | Shared UI primitives | `src/components/ui/*` | Base UI/Radix primitives require client-side event and focus handling |

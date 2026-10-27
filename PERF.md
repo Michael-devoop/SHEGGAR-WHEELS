@@ -48,7 +48,8 @@ This keeps storage and event handlers out of the server render path. See [`BOUND
 
 ## Deliberate performance choices
 
-- **String snapshots for `useSyncExternalStore`.** A fresh sorted array does not trigger an endless render loop because equal data produces an equal string.
+- **Query-cache deduplication.** Dashboard and table hooks share one cached read per collection instead of each component parsing localStorage independently.
+- **Write-first invalidation.** Storage writes invalidate the matching query immediately; 15-second polling is only a fallback.
 - **Page size of 9.** Catalogue pagination is small enough for a mobile-first grid and avoids an unbounded first render.
 - **Seed fallback on the server.** No network request is needed for first paint.
 - **Pure filtering before pagination.** The catalogue filters approved cars, dates, price, and text, then paginates once.
@@ -57,10 +58,10 @@ This keeps storage and event handlers out of the server render path. See [`BOUND
 
 ## Known limits
 
-1. **Every collection is parsed and serialized in full.** `JSON.stringify` runs on each snapshot read. With the demo dataset this is cheap; with thousands of records it is not.
+1. **Every collection is parsed and serialized in full.** Reads parse the whole array and writes serialize the whole array; there are no keyed selectors. With the demo dataset this is cheap; with thousands of records it is not.
 2. **No virtualized lists.** Admin and owner tables render all matching rows.
-3. **No image optimization.** Car images use `unoptimized` because the demo images are local placeholders. A production build should use a real image pipeline and remote patterns allowlist.
-4. **No persisted query cache.** Storage subscriptions replace React Query for current reads. The provider exists for future async work.
+3. **No image optimization.** Car images are local demo photos served with `unoptimized`. A production build should use the optimized image pipeline, or a CDN with an allowlisted remote host.
+4. **The query cache is memory-only.** Collection queries are cached per browser session and poll every 15 seconds; there is no offline persistence or service-worker cache.
 5. **No performance measurement in CI.** Bundle budgets and Web Vitals are not tracked yet.
 6. **No offline support.** Storage is local, but there is no service worker or installable app manifest.
 
@@ -80,8 +81,8 @@ Measure these with Lighthouse and real-device testing before recording results. 
 ## Next performance work
 
 - Add a bundle analyzer and fail CI when a route exceeds its budget.
-- Replace full-collection serialization with keyed selectors or a real query layer.
+- Replace full-collection reads and writes with keyed selectors or a real query layer.
 - Add virtualization to admin tables if the dataset grows.
-- Serve real car photos through `next/image` with an allowlisted remote host.
+- Run local car photos through `next/image` optimization, or move them to a CDN with an allowlisted remote host.
 - Add route-level `loading.tsx` skeletons where partial prerender still leaves a visible gap.
 - Add Playwright traces for checkout and owner booking flows so regressions are measurable.

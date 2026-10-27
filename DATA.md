@@ -59,19 +59,21 @@ localStorage / sessionStorage
 
 ## Reactive reads
 
-Interactive screens use `useSyncExternalStore` through hooks in `src/hooks`:
+Interactive screens use TanStack Query through hooks in `src/hooks`:
 
-- `useCars`, `useBookings`, `useReviews`, `useDisputes`, `useUsers`, `useAnnouncements`.
-- Snapshot functions return strings (`JSON.stringify`) so a freshly sorted array still compares equal when nothing changed.
-- Server snapshots return seed or empty data; the browser snapshot takes over after hydration.
+- `useCars`, `useBookings`, `useReviews`, `useDisputes`, `useUsers`, and `useAnnouncements` read through `useCollectionQuery`.
+- Each collection has a stable key in `src/lib/queryKeys.ts`.
+- `useStorageSync`, mounted inside `src/app/providers.tsx`, invalidates the matching query immediately after a storage write.
+- Collection queries poll every 15 seconds as a fallback for changes that arrive without a subscription event. Polling pauses while the tab is hidden but refreshes when it regains focus.
+- Queries use `networkMode: "always"` because localStorage reads work offline.
 
 The public catalogue follows a hybrid pattern:
 
 1. The server passes seeded approved cars and bookings to `CatalogueResults` and `StoredCarDetail`.
-2. The client subscribes to both stores.
+2. The client uses `useSyncExternalStore` with those server values as its initial snapshot.
 3. Date availability, owner edits, and admin approvals therefore appear without a rebuild.
 
-`@tanstack/react-query` is mounted in `src/app/providers.tsx` for future async data, but the current localStorage reads do not need it.
+`useSyncExternalStore` remains the right tool for session state and the public catalogue's server-seeded hydration path. The query cache is in memory only; a reload starts from storage again.
 
 ## Write path
 
