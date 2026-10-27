@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local verification artifacts (screenshots, evidence records)
 /artifacts/
+
+# local screen recording
+/frams.mp4
