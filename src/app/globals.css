@@ -251,6 +251,27 @@
     padding-inline: var(--gutter);
   }
 
+  /* Decorative diagonal texture for the dashboard hero card. The colours
+     follow the primary card's foreground token, so it stays visible if the
+     card is remapped onto a dark surface. */
+  .dashboard-stripes {
+    background-image: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--primary-foreground) 28%, transparent) 0 1px,
+      transparent 1px 10px
+    );
+    -webkit-mask-image: radial-gradient(
+      ellipse 80% 50% at 100% 0%,
+      #000 70%,
+      transparent 110%
+    );
+    mask-image: radial-gradient(
+      ellipse 80% 50% at 100% 0%,
+      #000 70%,
+      transparent 110%
+    );
+  }
+
   /* Vertical page frame. Reserves room for the mobile tab bar and the phone's
      home indicator. Add `.app-frame--bottom-nav` when a tab bar is rendered.
      `--bottom-nav-h` already becomes 0 from md up, so no extra media query. */

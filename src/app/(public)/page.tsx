@@ -5,6 +5,7 @@ import BrandMarquee from "@/components/home/BrandMarquee";
 import HeroSection from "@/components/hero/HeroSection";
 import { NEIGHBOURHOODS } from "@/lib/constants";
 import {
+  OG_IMAGE,
   SITE_DESCRIPTION,
   SITE_LOCALE,
   SITE_NAME,
@@ -20,6 +21,13 @@ export const metadata: Metadata = {
     url: "/",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
 };
 

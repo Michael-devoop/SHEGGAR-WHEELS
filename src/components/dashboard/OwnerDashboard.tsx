@@ -1,43 +1,35 @@
 "use client";
 
 import Link from "next/link";
+import { Star } from "lucide-react";
 
-import BookingStatusBadge from "@/components/bookings/BookingStatusBadge";
 import CarStatusBadge from "@/components/cars/CarStatusBadge";
+import DashboardBookingsTable from "@/components/dashboard/DashboardBookingsTable";
+import {
+  DetailStat,
+  MiniStat,
+  PrimaryStat,
+  StatsBento,
+  TrendStat,
+} from "@/components/dashboard/DashboardStats";
 import { useBookings } from "@/hooks/useBookings";
 import { useCars } from "@/hooks/useCars";
+import { useReviews } from "@/hooks/useReviews";
 import { useCurrentUser } from "@/hooks/useSession";
-import { getCarById } from "@/lib/data/cars";
-import { getUserById } from "@/lib/data/users";
-import { formatDate, formatETB } from "@/lib/format";
-import type { Booking } from "@/types";
+import {
+  averageRating,
+  buildMonthlyActivity,
+  isPaidEarnedBooking,
+} from "@/lib/domain/dashboardStats";
+import { formatETB } from "@/lib/format";
 
 const ACTIVE = ["confirmed", "in_progress"] as const;
-
-function RequestRow({ booking }: { booking: Booking }) {
-  const car = getCarById(booking.carId);
-  const renter = getUserById(booking.renterId);
-
-  return (
-    <li className="flex flex-wrap items-start justify-between gap-3 rounded-lg border border-border bg-surface p-4">
-      <div className="min-w-0">
-        <p className="font-semibold text-ink">
-          {car ? `${car.make} ${car.model}` : "Car no longer listed"}
-        </p>
-        <p className="mt-1 text-sm text-ink-muted">
-          {renter?.name ?? "A renter"} · {formatDate(booking.startDate)} →{" "}
-          {formatDate(booking.endDate)} · {formatETB(booking.subtotal)}
-        </p>
-      </div>
-      <BookingStatusBadge status={booking.status} />
-    </li>
-  );
-}
 
 export default function OwnerDashboard() {
   const { user, hydrated } = useCurrentUser();
   const cars = useCars();
   const bookings = useBookings();
+  const reviews = useReviews();
 
   if (!hydrated) {
     return (
@@ -58,15 +50,20 @@ export default function OwnerDashboard() {
   const active = received.filter((booking) =>
     ACTIVE.includes(booking.status as (typeof ACTIVE)[number]),
   );
-  const earnings = received
-    .filter((booking) =>
-      ["completed", "reviewed", "resolved"].includes(booking.status),
-    )
-    .reduce((sum, booking) => sum + booking.subtotal, 0);
+  const earned = received.filter(isPaidEarnedBooking);
+  const earnings = earned.reduce((sum, booking) => sum + booking.total, 0);
   const live = mine.filter((car) => car.status === "approved").length;
   const waiting = mine.filter(
     (car) => car.status === "pending" || car.status === "rejected",
   ).length;
+  const completedTrips = earned.length;
+  const requestActivity = buildMonthlyActivity(
+    received.map((booking) => booking.createdAt),
+  );
+  const ownerReviews = user
+    ? reviews.filter((review) => review.ownerId === user.id)
+    : [];
+  const rating = averageRating(ownerReviews.map((review) => review.rating));
 
   return (
     <div>
@@ -95,67 +92,73 @@ export default function OwnerDashboard() {
         </div>
       </header>
 
-      <dl className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            New requests
-          </dt>
-          <dd className="mt-1 text-2xl font-bold text-ink">
-            {requests.length}
-          </dd>
-        </div>
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            Active trips
-          </dt>
-          <dd className="mt-1 text-2xl font-bold text-ink">{active.length}</dd>
-        </div>
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            Live listings
-          </dt>
-          <dd className="mt-1 text-2xl font-bold text-ink">{live}</dd>
-        </div>
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            Earnings
-          </dt>
-          <dd className="mt-1 text-2xl font-bold text-ink">
-            {formatETB(earnings)}
-          </dd>
-        </div>
-      </dl>
+      <StatsBento>
+        <PrimaryStat
+          label="Lifetime earnings"
+          value={formatETB(earnings)}
+          description={`${completedTrips} completed ${
+            completedTrips === 1 ? "trip" : "trips"
+          } paid out to you.`}
+          meta={`${active.length} active ${
+            active.length === 1 ? "trip" : "trips"
+          } on the road now.`}
+        />
+        <TrendStat
+          href="/owner/bookings"
+          label="New requests"
+          value={requests.length}
+          points={requestActivity}
+          note={`Last 8 months · ${active.length} active · ${received.length} total`}
+        />
+        <MiniStat
+          href="/owner/cars"
+          label="Live listings"
+          value={live}
+          note={
+            waiting > 0
+              ? `${waiting} ${waiting === 1 ? "needs" : "need"} attention`
+              : mine.length === 0
+                ? "List your first car"
+                : "All approved"
+          }
+        />
+        <DetailStat
+          href="/owner/reviews"
+          icon={
+            <Star
+              className={
+                rating === null
+                  ? "size-5 text-muted-foreground"
+                  : "size-5 fill-highlight text-highlight"
+              }
+            />
+          }
+          title={
+            rating === null ? "No reviews yet" : `${rating.toFixed(1)} / 5.0`
+          }
+          note={
+            ownerReviews.length === 0
+              ? "Reviews appear after trips"
+              : `${ownerReviews.length} ${
+                  ownerReviews.length === 1 ? "review" : "reviews"
+                }`
+          }
+        />
+      </StatsBento>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-2">
-        <section aria-labelledby="requests">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2
-              id="requests"
-              className="text-sm font-bold uppercase tracking-widest text-ink-muted"
-            >
-              Waiting for you
-            </h2>
-            <Link
-              href="/owner/bookings"
-              className="text-sm font-medium text-ink underline underline-offset-4"
-            >
-              All requests
-            </Link>
-          </div>
-
-          {requests.length === 0 ? (
-            <p className="mt-3 rounded-lg border border-border bg-surface p-4 text-sm text-ink-muted">
-              No new requests. Booking requests appear here for you to accept or
-              decline.
-            </p>
-          ) : (
-            <ul role="list" className="mt-3 grid gap-3">
-              {requests.slice(0, 3).map((booking) => (
-                <RequestRow key={booking.id} booking={booking} />
-              ))}
-            </ul>
-          )}
-        </section>
+      <div className="mt-8 space-y-8">
+        <DashboardBookingsTable
+          variant="owner"
+          bookings={requests}
+          empty={
+            <>
+              <p className="font-semibold text-ink">No new requests.</p>
+              <p className="mt-1 text-sm text-ink-muted">
+                Booking requests appear here for you to accept or decline.
+              </p>
+            </>
+          }
+        />
 
         <section aria-labelledby="fleet">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -178,7 +181,7 @@ export default function OwnerDashboard() {
               You have not listed a car yet.
             </p>
           ) : (
-            <ul role="list" className="mt-3 grid gap-3">
+            <ul role="list" className="mt-3 grid gap-3 sm:grid-cols-2">
               {mine.slice(0, 4).map((car) => (
                 <li
                   key={car.id}

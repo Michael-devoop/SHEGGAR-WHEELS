@@ -2,12 +2,26 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Star } from "lucide-react";
 
 import BookingStatusBadge from "@/components/bookings/BookingStatusBadge";
+import DashboardBookingsTable from "@/components/dashboard/DashboardBookingsTable";
+import {
+  DetailStat,
+  MiniStat,
+  PrimaryStat,
+  StatsBento,
+  TrendStat,
+} from "@/components/dashboard/DashboardStats";
 import { useBookings } from "@/hooks/useBookings";
 import { useReviews } from "@/hooks/useReviews";
 import { useCurrentUser } from "@/hooks/useSession";
 import { getCarById } from "@/lib/data/cars";
+import {
+  averageRating,
+  buildMonthlyActivity,
+  isPaidEarnedBooking,
+} from "@/lib/domain/dashboardStats";
 import { formatDate, formatETB } from "@/lib/format";
 import type { Booking, BookingStatus } from "@/types";
 
@@ -87,6 +101,32 @@ export default function RenterDashboard() {
   const myReviews = user
     ? reviews.filter((review) => review.renterId === user.id)
     : [];
+  const tripsTaken = mine.filter(isPaidEarnedBooking);
+  const activity = buildMonthlyActivity(
+    tripsTaken.map((booking) => booking.endDate),
+  );
+  const rating = averageRating(myReviews.map((review) => review.rating));
+  const next = upcoming[0];
+  const nextCar = next ? getCarById(next.carId) : null;
+  const carLabel = nextCar
+    ? `${nextCar.make} ${nextCar.model}`
+    : "your trip";
+
+  let nextDescription =
+    "No upcoming trips. Browse approved cars and send a request.";
+  if (next?.status === "in_progress") {
+    nextDescription = `In progress: ${carLabel} returns ${formatDate(
+      next.endDate,
+    )}.`;
+  } else if (next?.status === "requested") {
+    nextDescription = `Requested: ${carLabel} for ${formatDate(
+      next.startDate,
+    )}.`;
+  } else if (next) {
+    nextDescription = `Next up: ${carLabel} starts ${formatDate(
+      next.startDate,
+    )}.`;
+  }
 
   return (
     <div>
@@ -107,55 +147,50 @@ export default function RenterDashboard() {
         </Link>
       </header>
 
-      <dl className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            Upcoming
-          </dt>
-          <dd className="mt-1 text-2xl font-bold text-ink">
-            {upcoming.length}
-          </dd>
-        </div>
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            Trips taken
-          </dt>
-          <dd className="mt-1 text-2xl font-bold text-ink">
-            {
-              mine.filter((booking) =>
-                ["completed", "reviewed"].includes(booking.status),
-              ).length
-            }
-          </dd>
-        </div>
-        <div className="rounded-lg border border-border bg-surface p-4">
-          <dt className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-            Reviews written
-          </dt>
-          <dd className="mt-1 text-2xl font-bold text-ink">
-            {myReviews.length}
-          </dd>
-        </div>
-      </dl>
+      <StatsBento>
+        <PrimaryStat
+          label="Upcoming trips"
+          value={upcoming.length}
+          description={nextDescription}
+        />
+        <TrendStat
+          href="/renter/bookings"
+          label="Trips taken"
+          value={tripsTaken.length}
+          points={activity}
+          note={`Last 8 months · ${mine.length} total ${
+            mine.length === 1 ? "booking" : "bookings"
+          }`}
+        />
+        <MiniStat label="Reviews written" value={myReviews.length} />
+        <DetailStat
+          href="/renter/bookings"
+          icon={
+            <Star
+              className={
+                rating === null
+                  ? "size-5 text-muted-foreground"
+                  : "size-5 fill-highlight text-highlight"
+              }
+            />
+          }
+          title={
+            rating === null ? "No reviews yet" : `${rating.toFixed(1)} / 5.0`
+          }
+          note={
+            rating === null
+              ? "Rate a completed trip"
+              : "Average rating you gave"
+          }
+        />
+      </StatsBento>
 
-      <section aria-labelledby="upcoming" className="mt-8">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2
-            id="upcoming"
-            className="text-sm font-bold uppercase tracking-widest text-ink-muted"
-          >
-            Upcoming trips
-          </h2>
-          <Link
-            href="/renter/bookings"
-            className="text-sm font-medium text-ink underline underline-offset-4"
-          >
-            All bookings
-          </Link>
-        </div>
-
-        {upcoming.length === 0 ? (
-          <div className="mt-3 rounded-lg border border-border bg-surface p-6">
+      <DashboardBookingsTable
+        className="mt-8"
+        variant="renter"
+        bookings={upcoming}
+        empty={
+          <>
             <p className="font-semibold text-ink">No upcoming trips.</p>
             <p className="mt-1 text-sm text-ink-muted">
               Browse approved cars and send a request; the owner confirms it.
@@ -166,15 +201,9 @@ export default function RenterDashboard() {
             >
               Browse cars
             </Link>
-          </div>
-        ) : (
-          <ul role="list" className="mt-3 grid gap-3">
-            {upcoming.map((booking) => (
-              <TripCard key={booking.id} booking={booking} />
-            ))}
-          </ul>
-        )}
-      </section>
+          </>
+        }
+      />
 
       {past.length > 0 ? (
         <section aria-labelledby="past" className="mt-8">

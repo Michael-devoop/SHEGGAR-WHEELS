@@ -16,6 +16,13 @@ export const SITE_DESCRIPTION =
 
 export const SITE_LOCALE = "en_ET";
 
+export const OG_IMAGE = {
+  url: "/og-logo.png",
+  width: 1200,
+  height: 630,
+  alt: `${SITE_NAME} logo — peer-to-peer car rental in Addis Ababa`,
+};
+
 const FALLBACK_SITE_URL = "http://localhost:3000";
 const PRODUCTION_SITE_URL = "https://sheggar-wheels-liart.vercel.app";
 
