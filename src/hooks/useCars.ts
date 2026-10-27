@@ -1,26 +1,16 @@
 "use client";
 
 /**
- * Stored cars as React state.
+ * Cached cars with background polling.
  *
- * Snapshots are strings so a freshly sorted array still compares equal when
- * the underlying data has not changed. Owner and admin screens read through
- * this hook; the public catalogue is rendered on the server.
+ * Owner and admin screens read through this hook; the public catalogue keeps
+ * its server-seeded snapshot plus direct storage subscription.
  */
-import { useSyncExternalStore } from "react";
-
-import { STORAGE_KEYS } from "@/lib/constants";
+import { useCollectionQuery } from "@/hooks/useCollectionQuery";
 import { listCars } from "@/lib/data/cars";
-import { localStore } from "@/lib/storage/storage";
+import { queryKeys } from "@/lib/queryKeys";
 import type { Car } from "@/types";
 
-const subscribe = (onChange: () => void): (() => void) =>
-  localStore.subscribe(STORAGE_KEYS.cars, () => onChange());
-
-const getSnapshot = (): string => JSON.stringify(listCars());
-const getServerSnapshot = (): string => "[]";
-
 export function useCars(): Car[] {
-  const raw = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  return JSON.parse(raw) as Car[];
+  return useCollectionQuery(queryKeys.cars, listCars);
 }

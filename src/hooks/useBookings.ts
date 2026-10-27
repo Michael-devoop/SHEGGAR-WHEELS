@@ -1,26 +1,16 @@
 "use client";
 
 /**
- * Stored bookings as React state.
+ * Cached bookings with background polling.
  *
- * Snapshots are strings so a freshly sorted array still compares equal when
- * the underlying data has not changed. Writes by the actions emit on the same
- * store, so lists and details update without a refetch.
+ * A storage write invalidates this query immediately; the poll covers changes
+ * that arrive without a subscription event.
  */
-import { useSyncExternalStore } from "react";
-
-import { STORAGE_KEYS } from "@/lib/constants";
+import { useCollectionQuery } from "@/hooks/useCollectionQuery";
 import { listBookings } from "@/lib/data/bookings";
-import { localStore } from "@/lib/storage/storage";
+import { queryKeys } from "@/lib/queryKeys";
 import type { Booking } from "@/types";
 
-const subscribe = (onChange: () => void): (() => void) =>
-  localStore.subscribe(STORAGE_KEYS.bookings, () => onChange());
-
-const getSnapshot = (): string => JSON.stringify(listBookings());
-const getServerSnapshot = (): string => "[]";
-
 export function useBookings(): Booking[] {
-  const raw = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  return JSON.parse(raw) as Booking[];
+  return useCollectionQuery(queryKeys.bookings, listBookings);
 }
