@@ -1,11 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
+
+import ChartSkeleton from "@/components/charts/ChartSkeleton";
 import { useBookings } from "@/hooks/useBookings";
 import { useCars } from "@/hooks/useCars";
 import { useCurrentUser } from "@/hooks/useSession";
 import { getCarById } from "@/lib/data/cars";
+import { buildStatusBreakdown } from "@/lib/domain/chartData";
 import { formatETB } from "@/lib/format";
+import { bookingStatusLabel } from "@/lib/status";
 import type { BookingStatus } from "@/types";
+
+const BookingsByStatusChart = dynamic(
+  () => import("@/components/charts/BookingsByStatusChart"),
+  {
+    ssr: false,
+    loading: () => <ChartSkeleton label="Loading bookings chart…" />,
+  },
+);
 
 const COMPLETED: BookingStatus[] = ["completed", "reviewed"];
 const LOST: BookingStatus[] = ["cancelled", "declined"];
@@ -33,10 +46,7 @@ export default function AdminReports() {
   const average = completed.length ? gross / completed.length : 0;
   const bookedDays = completed.reduce((sum, booking) => sum + booking.days, 0);
 
-  const byStatus = new Map<BookingStatus, number>();
-  for (const booking of bookings) {
-    byStatus.set(booking.status, (byStatus.get(booking.status) ?? 0) + 1);
-  }
+  const statusRows = buildStatusBreakdown(bookings);
 
   const byCar = new Map<
     string,
@@ -124,33 +134,47 @@ export default function AdminReports() {
           >
             Bookings by status
           </h2>
-          <table className="mt-3 w-full border-collapse text-sm">
-            <caption className="sr-only">
-              Number of bookings in each status
-            </caption>
-            <thead>
-              <tr className="border-b border-border text-left text-xs uppercase tracking-widest text-ink-muted">
-                <th scope="col" className="py-2 font-semibold">
-                  Status
-                </th>
-                <th scope="col" className="py-2 text-right font-semibold">
-                  Bookings
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...byStatus.entries()]
-                .sort(([, a], [, b]) => b - a)
-                .map(([status, count]) => (
-                  <tr key={status} className="border-b border-border last:border-0">
-                    <th scope="row" className="py-3 text-left font-medium capitalize text-ink">
-                      {status.replace("_", " ")}
+          {statusRows.length === 0 ? (
+            <p className="mt-3 rounded-lg border border-border bg-surface p-4 text-sm text-ink-muted">
+              No bookings yet.
+            </p>
+          ) : (
+            <>
+              <div className="mt-3 rounded-lg border border-border bg-surface p-4">
+                <BookingsByStatusChart data={statusRows} />
+              </div>
+              <table className="mt-4 w-full border-collapse text-sm">
+                <caption className="sr-only">
+                  Number of bookings in each status
+                </caption>
+                <thead>
+                  <tr className="border-b border-border text-left text-xs uppercase tracking-widest text-ink-muted">
+                    <th scope="col" className="py-2 font-semibold">
+                      Status
                     </th>
-                    <td className="py-3 text-right text-ink-muted">{count}</td>
+                    <th scope="col" className="py-2 text-right font-semibold">
+                      Bookings
+                    </th>
                   </tr>
-                ))}
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  {statusRows.map((row) => (
+                    <tr
+                      key={row.status}
+                      className="border-b border-border last:border-0"
+                    >
+                      <th scope="row" className="py-3 text-left font-medium text-ink">
+                        {bookingStatusLabel(row.status)}
+                      </th>
+                      <td className="py-3 text-right text-ink-muted">
+                        {row.count}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
         </section>
 
         <section aria-labelledby="top-cars">

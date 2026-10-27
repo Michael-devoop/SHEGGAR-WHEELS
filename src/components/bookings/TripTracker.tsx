@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import BookingStatusBadge from "@/components/bookings/BookingStatusBadge";
 import StatusTimeline from "@/components/bookings/StatusTimeline";
+import MapLoader from "@/components/map/MapLoader";
 import { useBookings } from "@/hooks/useBookings";
 import { useCurrentUser } from "@/hooks/useSession";
 import { getCarById } from "@/lib/data/cars";
@@ -113,6 +114,41 @@ export default function TripTracker({ bookingId }: { bookingId: string }) {
           </Link>
         </aside>
       </div>
+
+      {car ? (
+        <section aria-labelledby="pickup-map" className="mt-6">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2
+              id="pickup-map"
+              className="text-sm font-bold uppercase tracking-widest text-ink-muted"
+            >
+              Pickup and return area
+            </h2>
+            <span className="inline-flex items-center rounded-pill bg-warning-bg px-2.5 py-1 text-xs font-semibold text-warning">
+              Simulation
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-ink-muted">
+            Meet the owner in {car.neighbourhood}. The marker shows the
+            neighbourhood centre, not a door-to-door meeting point.
+          </p>
+          <p className="mt-1 text-xs text-ink-muted">
+            The moving marker is a demo animation, not live GPS.
+          </p>
+          <MapLoader
+            className="mt-3"
+            variant="trip"
+            simulate
+            point={{
+              latitude: car.latitude,
+              longitude: car.longitude,
+              label: `${car.make} ${car.model} pickup`,
+              neighbourhood: car.neighbourhood,
+              city: car.city,
+            }}
+          />
+        </section>
+      ) : null}
     </div>
   );
 }

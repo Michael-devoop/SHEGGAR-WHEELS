@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Send } from "lucide-react";
 
@@ -56,9 +57,17 @@ const SOCIALS = [
   },
 ];
 
-const COPYRIGHT_YEAR = new Date().getFullYear();
+const subscribeToYear = (): (() => void) => () => {};
+const getCopyrightYear = (): number => new Date().getFullYear();
+const getServerCopyrightYear = (): number => 2026;
 
 export default function Footer() {
+  const copyrightYear = useSyncExternalStore(
+    subscribeToYear,
+    getCopyrightYear,
+    getServerCopyrightYear,
+  );
+
   return (
     <footer className="mt-12 border-t border-border bg-bg">
       {/* Main grid */}
@@ -140,7 +149,7 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-border">
         <div className="shell flex flex-col gap-3 py-5 text-sm text-ink-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {COPYRIGHT_YEAR} Sheggar Wheels. All rights reserved.</p>
+          <p>© {copyrightYear} Sheggar Wheels. All rights reserved.</p>
           <div className="flex flex-wrap gap-4">
             <Link href="#" className="transition-colors hover:text-ink">
               Privacy Policy

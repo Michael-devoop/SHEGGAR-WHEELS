@@ -1,10 +1,21 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 
+import ChartSkeleton from "@/components/charts/ChartSkeleton";
 import { useBookings } from "@/hooks/useBookings";
 import { useCurrentUser } from "@/hooks/useSession";
+import { buildMonthlyEarnings } from "@/lib/domain/chartData";
 import { formatETB } from "@/lib/format";
+
+const EarningsChart = dynamic(
+  () => import("@/components/charts/EarningsChart"),
+  {
+    ssr: false,
+    loading: () => <ChartSkeleton label="Loading earnings chart…" />,
+  },
+);
 
 const EARNED = new Set(["completed", "reviewed"]);
 const UPCOMING = new Set(["confirmed", "in_progress"]);
@@ -33,15 +44,8 @@ export default function OwnerEarnings() {
     0,
   );
 
-  const byMonth = new Map<string, { total: number; trips: number }>();
-  for (const booking of earned) {
-    const key = booking.endDate.slice(0, 7);
-    const bucket = byMonth.get(key) ?? { total: 0, trips: 0 };
-    bucket.total += booking.total;
-    bucket.trips += 1;
-    byMonth.set(key, bucket);
-  }
-  const months = [...byMonth.entries()].sort(([a], [b]) => b.localeCompare(a));
+  const months = buildMonthlyEarnings(earned);
+  const tableMonths = [...months].reverse();
 
   return (
     <div>
@@ -111,44 +115,45 @@ export default function OwnerEarnings() {
             complete.
           </p>
         ) : (
-          <table className="mt-3 w-full border-collapse text-sm">
-            <caption className="sr-only">
-              Earnings from completed trips, by return month
-            </caption>
-            <thead>
-              <tr className="border-b border-border text-left text-xs uppercase tracking-widest text-ink-muted">
-                <th scope="col" className="py-2 font-semibold">
-                  Month
-                </th>
-                <th scope="col" className="py-2 font-semibold">
-                  Trips
-                </th>
-                <th scope="col" className="py-2 text-right font-semibold">
-                  Earned
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {months.map(([key, bucket]) => {
-                const [year, month] = key.split("-").map(Number);
-                const label = new Date(year, month - 1, 1).toLocaleDateString(
-                  "en-US",
-                  { month: "long", year: "numeric" },
-                );
-                return (
-                  <tr key={key} className="border-b border-border last:border-0">
+          <>
+            <div className="mt-3 rounded-lg border border-border bg-surface p-4">
+              <EarningsChart data={months} />
+            </div>
+            <table className="mt-4 w-full border-collapse text-sm">
+              <caption className="sr-only">
+                Earnings from completed trips, by return month
+              </caption>
+              <thead>
+                <tr className="border-b border-border text-left text-xs uppercase tracking-widest text-ink-muted">
+                  <th scope="col" className="py-2 font-semibold">
+                    Month
+                  </th>
+                  <th scope="col" className="py-2 font-semibold">
+                    Trips
+                  </th>
+                  <th scope="col" className="py-2 text-right font-semibold">
+                    Earned
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableMonths.map((month) => (
+                  <tr
+                    key={month.key}
+                    className="border-b border-border last:border-0"
+                  >
                     <th scope="row" className="py-3 text-left font-medium text-ink">
-                      {label}
+                      {month.label}
                     </th>
-                    <td className="py-3 text-ink-muted">{bucket.trips}</td>
+                    <td className="py-3 text-ink-muted">{month.trips}</td>
                     <td className="py-3 text-right font-semibold text-ink">
-                      {formatETB(bucket.total)}
+                      {formatETB(month.total)}
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </section>
     </div>

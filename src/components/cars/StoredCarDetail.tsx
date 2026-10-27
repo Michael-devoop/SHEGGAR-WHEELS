@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import CarStatusBadge from "@/components/cars/CarStatusBadge";
+import MapLoader from "@/components/map/MapLoader";
 import StarRating from "@/components/reviews/StarRating";
 import { Button } from "@/components/ui/button";
 import { useHydrated } from "@/hooks/useSession";
@@ -211,6 +212,29 @@ export default function StoredCarDetail({
             <p className="mt-2 text-sm leading-relaxed text-ink-muted">
               {car.description}
             </p>
+          </section>
+
+          <section aria-labelledby="pickup" className="mt-8">
+            <h2
+              id="pickup"
+              className="text-lg font-bold tracking-tight text-ink"
+            >
+              Sample location
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+              Sample pickup area in {car.neighbourhood}. The exact handover
+              point is confirmed with the owner after your request is accepted.
+            </p>
+            <MapLoader
+              className="mt-3"
+              point={{
+                latitude: car.latitude,
+                longitude: car.longitude,
+                label: `${car.make} ${car.model} pickup`,
+                neighbourhood: car.neighbourhood,
+                city: car.city,
+              }}
+            />
           </section>
 
           {owner ? (
