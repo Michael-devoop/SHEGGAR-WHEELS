@@ -8,6 +8,7 @@ import { useBookings } from "@/hooks/useBookings";
 import { useCurrentUser } from "@/hooks/useSession";
 import { getCarById } from "@/lib/data/cars";
 import { getUserById } from "@/lib/data/users";
+import { carPath } from "@/lib/domain/carSlug";
 import { formatDate, formatETB } from "@/lib/format";
 import type { BookingStatus } from "@/types";
 
@@ -146,9 +147,9 @@ export default function AdminBookings() {
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-3 border-t border-border pt-3">
-                  {car ? (
+                  {car?.status === "approved" ? (
                     <Link
-                      href={`/cars/${car.id}`}
+                      href={carPath(car)}
                       className="inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4"
                     >
                       View listing

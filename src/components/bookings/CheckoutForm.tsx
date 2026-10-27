@@ -12,6 +12,7 @@ import {
   isCarAvailable,
   isValidDateRange,
 } from "@/lib/domain/availability";
+import { carPath } from "@/lib/domain/carSlug";
 import { quoteForCar } from "@/lib/domain/pricing";
 import { formatDays, formatETB } from "@/lib/format";
 import { useCurrentUser } from "@/hooks/useSession";
@@ -98,7 +99,7 @@ export default function CheckoutForm({
             Manage availability
           </Link>
           <Link
-            href={`/cars/${car.id}`}
+            href={carPath(car)}
             className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-surface-2"
           >
             Back to the listing
@@ -112,7 +113,7 @@ export default function CheckoutForm({
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-10">
       <div>
         <Link
-          href={`/cars/${car.id}`}
+          href={carPath(car)}
           className="inline-flex min-h-11 items-center text-sm font-medium text-ink-muted transition-colors hover:text-ink"
         >
           <span aria-hidden="true">←</span> Back to the car
@@ -133,7 +134,6 @@ export default function CheckoutForm({
               alt={`${car.make} ${car.model}`}
               fill
               sizes="96px"
-              unoptimized
               className="object-cover"
             />
           </div>

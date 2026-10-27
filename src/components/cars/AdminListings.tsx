@@ -32,7 +32,6 @@ function ListingRow({
             alt={`${car.make} ${car.model}`}
             fill
             sizes="80px"
-            unoptimized
             className="object-cover"
           />
         </div>

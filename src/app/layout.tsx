@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import OrganizationJsonLd from "@/components/seo/OrganizationJsonLd";
 import Providers from "./providers";
 import "./globals.css";
 import {
   SITE_DESCRIPTION,
   SITE_LOCALE,
   SITE_NAME,
+  SITE_TITLE,
   SITE_URL,
 } from "@/lib/seo/site";
 import { cn } from "@/lib/utils";
@@ -15,7 +17,7 @@ const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Peer-to-peer car rental in Addis Ababa`,
+    default: SITE_TITLE,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -25,10 +27,12 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: SITE_LOCALE,
     url: SITE_URL,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | Peer-to-peer car rental in Addis Ababa`,
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
   // No `alternates.canonical` here: it would be inherited by every page.
@@ -49,6 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className="min-h-screen bg-background text-foreground font-sans antialiased">
+        <OrganizationJsonLd />
         <a href="#main" className="skip-link">
           Skip to content
         </a>

@@ -2,10 +2,23 @@ import type { Metadata } from "next";
 
 import SignUpForm from "@/components/auth/SignUpForm";
 import AuthShell from "@/components/auth/AuthShell";
+import { SITE_LOCALE, SITE_NAME } from "@/lib/seo/site";
+
+const SIGN_UP_DESCRIPTION =
+  "Join Sheggar Wheels to rent or list verified cars in Addis Ababa.";
 
 export const metadata: Metadata = {
-  title: "Create an account · Sheggar Wheels",
-  description: "Join Sheggar Wheels to rent or list verified cars in Addis Ababa.",
+  title: "Create an account",
+  description: SIGN_UP_DESCRIPTION,
+  alternates: { canonical: "/signup" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: SITE_LOCALE,
+    url: "/signup",
+    title: `Create an account | ${SITE_NAME}`,
+    description: SIGN_UP_DESCRIPTION,
+  },
 };
 
 export default function Page() {

@@ -64,6 +64,12 @@ export const carSchema = z.object({
   pricePerDay: positiveMoney,
   photos: z.array(shortText).min(1),
   description: shortText,
+  slug: z
+    .string()
+    .trim()
+    .max(200)
+    .regex(/^[a-z0-9]+(?:[-_][a-z0-9]+)*$/)
+    .optional(),
   status: carStatusSchema,
   unavailableDates: z.array(isoDateSchema),
   createdAt: isoDateTimeSchema,

@@ -13,6 +13,7 @@ import {
 import { listBookings } from "@/lib/data/bookings";
 import { listCars } from "@/lib/data/cars";
 import { getUserById } from "@/lib/data/users";
+import { uniqueCarSlug } from "@/lib/domain/carSlug";
 import { hasRole } from "@/lib/domain/permissions";
 import { newId } from "@/lib/ids";
 import { carDraftSchema, carSchema } from "@/lib/schemas";
@@ -65,7 +66,7 @@ export function createCar(input: CarDraft): Result<Car> {
   }
 
   const coordinates = NEIGHBOURHOOD_COORDS[parsed.data.neighbourhood];
-  const candidate: Car = {
+  const draft: Car = {
     id: newId("car"),
     ownerId: owner.data.id,
     ...parsed.data,
@@ -75,6 +76,10 @@ export function createCar(input: CarDraft): Result<Car> {
     status: "pending",
     unavailableDates: [],
     createdAt: now(),
+  };
+  const candidate: Car = {
+    ...draft,
+    slug: uniqueCarSlug(draft, listCars()),
   };
 
   const car = carSchema.safeParse(candidate);
@@ -122,11 +127,15 @@ export function updateCar(carId: string, input: CarDraft): Result<Car> {
     return { ok: false, error: "You can only edit your own listings." };
   }
 
-  const candidate: Car = {
+  const draft: Car = {
     ...existing,
     ...parsed.data,
     ...NEIGHBOURHOOD_COORDS[parsed.data.neighbourhood],
     status: existing.status === "inactive" ? "inactive" : "pending",
+  };
+  const candidate: Car = {
+    ...draft,
+    slug: existing.slug ?? uniqueCarSlug(draft, cars),
   };
 
   const car = carSchema.safeParse(candidate);

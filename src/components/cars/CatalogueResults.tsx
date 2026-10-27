@@ -11,6 +11,7 @@ import {
   averageRatingForCar,
   listReviewsForCar,
 } from "@/lib/data/reviews";
+import { carPath } from "@/lib/domain/carSlug";
 import {
   hasCatalogueDateRange,
   searchCars,
@@ -46,13 +47,14 @@ function catalogueHref(query: CatalogueQuery, page: number): string {
 }
 
 function carHref(car: Car, query: CatalogueQuery): string {
-  if (!hasCatalogueDateRange(query)) return `/cars/${car.id}`;
+  const path = carPath(car);
+  if (!hasCatalogueDateRange(query)) return path;
 
   const params = new URLSearchParams({
     startDate: query.startDate,
     endDate: query.endDate,
   });
-  return `/cars/${car.id}?${params.toString()}`;
+  return `${path}?${params.toString()}`;
 }
 
 /**

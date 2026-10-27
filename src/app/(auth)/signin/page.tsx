@@ -3,10 +3,22 @@ import { Suspense } from "react";
 
 import SignInForm from "@/components/auth/SignInForm";
 import AuthShell from "@/components/auth/AuthShell";
+import { SITE_LOCALE, SITE_NAME } from "@/lib/seo/site";
+
+const SIGN_IN_DESCRIPTION = "Sign in to your Sheggar Wheels account.";
 
 export const metadata: Metadata = {
-  title: "Sign in · Sheggar Wheels",
-  description: "Sign in to your Sheggar Wheels account.",
+  title: "Sign in",
+  description: SIGN_IN_DESCRIPTION,
+  alternates: { canonical: "/signin" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: SITE_LOCALE,
+    url: "/signin",
+    title: `Sign in | ${SITE_NAME}`,
+    description: SIGN_IN_DESCRIPTION,
+  },
 };
 
 export default function Page() {

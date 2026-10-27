@@ -7,8 +7,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        // Signed-in surfaces carry no public value and must not be indexed.
-        disallow: ["/admin/", "/owner/", "/renter/"],
+        // Signed-in surfaces and the data inspector carry no public value.
+        disallow: [
+          "/admin",
+          "/admin/",
+          "/owner",
+          "/owner/",
+          "/renter",
+          "/renter/",
+          "/dev",
+          "/dev/",
+        ],
       },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),

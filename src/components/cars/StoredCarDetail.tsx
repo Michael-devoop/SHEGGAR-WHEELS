@@ -20,6 +20,7 @@ import { STORAGE_KEYS } from "@/lib/constants";
 import { listCars } from "@/lib/data/cars";
 import { listReviews } from "@/lib/data/reviews";
 import { getUserById } from "@/lib/data/users";
+import { findCarBySlug } from "@/lib/domain/carSlug";
 import { formatDate, formatETB } from "@/lib/format";
 import { localStore } from "@/lib/storage/storage";
 import type { Car, ISODate, Review } from "@/types";
@@ -38,13 +39,13 @@ const subscribeReviews = (onChange: () => void): (() => void) =>
  * listing, an edited price and a new review all appear without a rebuild.
  */
 export default function StoredCarDetail({
-  carId,
+  carSlug,
   initialCar,
   initialReviews,
   initialStartDate = "",
   initialEndDate = "",
 }: {
-  carId: string;
+  carSlug: string;
   initialCar: Car | null;
   initialReviews: Review[];
   initialStartDate?: ISODate | "";
@@ -66,7 +67,7 @@ export default function StoredCarDetail({
   const cars = JSON.parse(carsRaw) as Car[];
   const allReviews = JSON.parse(reviewsRaw) as Review[];
 
-  const car = cars.find((entry) => entry.id === carId) ?? initialCar;
+  const car = findCarBySlug(cars, carSlug) ?? initialCar;
 
   if (!car) {
     if (!hydrated) {
@@ -134,7 +135,7 @@ export default function StoredCarDetail({
               width={800}
               height={600}
               priority
-              unoptimized
+              sizes="(min-width: 1024px) 60vw, 100vw"
               className="aspect-[4/3] w-full object-cover"
             />
           </figure>

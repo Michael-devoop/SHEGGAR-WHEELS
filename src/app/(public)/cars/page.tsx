@@ -6,11 +6,24 @@ import CatalogueResults from "@/components/cars/CatalogueResults";
 import { listBookings } from "@/lib/data/bookings";
 import { listCars } from "@/lib/data/cars";
 import { parseCatalogueQuery } from "@/lib/domain/catalogue";
+import { SITE_LOCALE, SITE_NAME } from "@/lib/seo/site";
+
+const CARS_TITLE = "Browse cars";
+const CARS_DESCRIPTION =
+  "Approved cars for rent in Addis Ababa, filtered by trip dates, neighbourhood, transmission and daily price.";
 
 export const metadata: Metadata = {
-  title: "Browse cars",
-  description:
-    "Approved cars for rent in Addis Ababa, filtered by trip dates, neighbourhood, transmission and daily price.",
+  title: CARS_TITLE,
+  description: CARS_DESCRIPTION,
+  alternates: { canonical: "/cars" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: SITE_LOCALE,
+    url: "/cars",
+    title: `${CARS_TITLE} | ${SITE_NAME}`,
+    description: CARS_DESCRIPTION,
+  },
 };
 
 type CarsPageProps = {

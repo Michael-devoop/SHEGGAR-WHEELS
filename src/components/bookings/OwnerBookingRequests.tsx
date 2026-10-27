@@ -13,6 +13,7 @@ import {
 import { getCarById } from "@/lib/data/cars";
 import { getUserById } from "@/lib/data/users";
 import { bookingEventsFor } from "@/lib/domain/bookingMachine";
+import { carPath } from "@/lib/domain/carSlug";
 import { formatDate, formatETB } from "@/lib/format";
 import { paymentStatusLabel } from "@/lib/status";
 import type { Booking, BookingStatus } from "@/types";
@@ -150,9 +151,9 @@ function RequestRow({
           confirming={confirming}
           setConfirming={setConfirming}
         />
-        {car ? (
+        {car?.status === "approved" ? (
           <Link
-            href={`/cars/${car.id}`}
+            href={carPath(car)}
             className="inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4"
           >
             View listing

@@ -16,6 +16,7 @@ import { cancelBooking } from "@/lib/actions/bookingActions";
 import { getCarById } from "@/lib/data/cars";
 import { getUserById } from "@/lib/data/users";
 import { canTransition } from "@/lib/domain/bookingMachine";
+import { carPath } from "@/lib/domain/carSlug";
 import { formatDate, formatDays, formatETB } from "@/lib/format";
 import { paymentStatusLabel } from "@/lib/status";
 import type { Role } from "@/types";
@@ -177,7 +178,6 @@ export default function BookingDetail({ bookingId }: { bookingId: string }) {
                     alt={`${car.make} ${car.model}`}
                     fill
                     sizes="96px"
-                    unoptimized
                     className="object-cover"
                   />
                 </div>
@@ -190,12 +190,14 @@ export default function BookingDetail({ bookingId }: { bookingId: string }) {
                     {car.transmission === "automatic" ? "Automatic" : "Manual"} ·{" "}
                     {car.seats} seats
                   </p>
-                  <Link
-                    href={`/cars/${car.id}`}
-                    className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4"
-                  >
-                    View the listing
-                  </Link>
+                  {car.status === "approved" ? (
+                    <Link
+                      href={carPath(car)}
+                      className="mt-2 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4"
+                    >
+                      View the listing
+                    </Link>
+                  ) : null}
                 </div>
               </div>
             </section>

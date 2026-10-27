@@ -77,7 +77,6 @@ export default function OwnerCars() {
                     alt={`${car.make} ${car.model}`}
                     fill
                     sizes="96px"
-                    unoptimized
                     className="object-cover"
                   />
                 </div>

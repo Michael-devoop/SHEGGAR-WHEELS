@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MapPin, Users } from "lucide-react";
 
 import StarRating from "@/components/reviews/StarRating";
+import { carPath } from "@/lib/domain/carSlug";
 import { formatETB } from "@/lib/format";
 import type { Car } from "@/types";
 
@@ -10,7 +11,7 @@ export default function CarCard({
   car,
   rating,
   reviewCount,
-  href = `/cars/${car.id}`,
+  href = carPath(car),
 }: {
   car: Car;
   rating: number | null;
@@ -29,7 +30,6 @@ export default function CarCard({
           alt={`${car.make} ${car.model}`}
           fill
           sizes="(min-width: 1280px) 28vw, (min-width: 640px) 45vw, 100vw"
-          unoptimized
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 

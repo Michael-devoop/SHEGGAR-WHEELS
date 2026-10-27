@@ -30,7 +30,7 @@ Optional environment variable:
 cp .env.example .env.local
 ```
 
-`NEXT_PUBLIC_SITE_URL` controls canonical URLs, `robots.txt`, and `sitemap.xml`. It defaults to `http://localhost:3000` in development.
+`NEXT_PUBLIC_SITE_URL` controls canonical URLs, `robots.txt`, and `sitemap.xml`. It defaults to `http://localhost:3000` in development and to the Vercel production host (`https://sheggar-wheels-liart.vercel.app`) when unset in production.
 
 ## Demo accounts
 
@@ -67,7 +67,7 @@ Sign-up creates an active account with the roles you choose.
 
 | Area | Routes |
 | --- | --- |
-| Public | `/`, `/cars`, `/cars/[id]`, `/signin`, `/signup` |
+| Public | `/`, `/cars`, `/cars/[slug]`, `/signin`, `/signup` |
 | Renter | `/renter/dashboard`, `/renter/checkout`, `/renter/bookings`, booking detail, review, tracking |
 | Owner | `/owner`, `/owner/cars`, car editor, availability, per-car bookings, `/owner/bookings`, `/owner/earnings`, `/owner/reviews`, `/owner/disputes` |
 | Admin | `/admin`, `/admin/listings`, `/admin/bookings`, `/admin/users`, `/admin/disputes`, `/admin/announcements`, `/admin/reports` |

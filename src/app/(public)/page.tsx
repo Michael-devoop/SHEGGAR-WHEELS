@@ -1,8 +1,27 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import BrandMarquee from "@/components/home/BrandMarquee";
 import HeroSection from "@/components/hero/HeroSection";
 import { NEIGHBOURHOODS } from "@/lib/constants";
+import {
+  SITE_DESCRIPTION,
+  SITE_LOCALE,
+  SITE_NAME,
+  SITE_TITLE,
+} from "@/lib/seo/site";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: SITE_LOCALE,
+    url: "/",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+};
 
 const STEPS = [
   {

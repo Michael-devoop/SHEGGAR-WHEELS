@@ -9,6 +9,7 @@ import { z } from "zod";
 
 import { seedCars } from "@/data/seed";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { findCarBySlug } from "@/lib/domain/carSlug";
 import { carSchema } from "@/lib/schemas";
 import { localStore } from "@/lib/storage/storage";
 import type { Car, CarStatus } from "@/types";
@@ -32,6 +33,11 @@ export function listCars(): Car[] {
 /** The car with this id, or null when there is no such car. */
 export function getCarById(id: string): Car | null {
   return listCars().find((car) => car.id === id) ?? null;
+}
+
+/** The car at a public slug, with the old id form still accepted. */
+export function getCarBySlug(slug: string): Car | null {
+  return findCarBySlug(listCars(), slug);
 }
 
 /** The cars a given owner has listed, newest first. */

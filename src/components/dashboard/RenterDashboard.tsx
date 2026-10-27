@@ -32,7 +32,6 @@ function TripCard({ booking }: { booking: Booking }) {
               alt={`${car.make} ${car.model}`}
               fill
               sizes="80px"
-              unoptimized
               className="object-cover"
             />
           </div>

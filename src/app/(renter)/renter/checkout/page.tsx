@@ -80,12 +80,6 @@ async function CheckoutContent({ searchParams }: CheckoutPageProps) {
             >
               Browse cars
             </Link>
-            <Link
-              href={`/cars/${car.id}`}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-medium text-ink transition-colors hover:bg-surface-2"
-            >
-              View the listing
-            </Link>
           </div>
         </div>
       </div>
