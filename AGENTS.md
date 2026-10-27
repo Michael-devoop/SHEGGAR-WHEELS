@@ -7,3 +7,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Project workflow
+
+- Read `TASKS.md` before starting work. Treat `BRIEF.md` as the product brief when present.
+- Work on one milestone at a time. State the milestone, give a short plan with files, then wait for approval.
+- Write tests first for pure logic.
+- After implementation, run `npx tsc --noEmit`, `npm run lint`, `npm test -- --run`, and `npm run build`; show the results.
+- Review the diff in a fresh session before committing.
+- Create one commit per milestone, push the branch, and check the Vercel preview on a phone.
+- Do not disable Cache Components or Partial Prerendering to make a problem disappear.
+- Keep secrets and the untracked local video out of commits.
