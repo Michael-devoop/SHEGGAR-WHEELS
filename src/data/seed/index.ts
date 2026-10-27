@@ -19,12 +19,10 @@ import type {
   Review,
   User,
 } from "@/types";
-import { CAR_PLACEHOLDER_PHOTO } from "@/lib/constants";
 import { daysBetween, priceFor, timestampDaysFromToday } from "./helpers";
 
 export { daysBetween, daysFromToday, priceFor, timestampDaysFromToday } from "./helpers";
 
-const PLACEHOLDER = CAR_PLACEHOLDER_PHOTO;
 
 export interface Seeds {
   users: User[];
@@ -128,7 +126,7 @@ export function getSeeds(): Seeds {
       latitude: 9.0192,
       longitude: 38.7525,
       pricePerDay: 2400,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-01.jpg"],
       description:
         "Service history at a Toyota dealer in Bole. Air conditioning, reverse camera and a phone charger in the glove box. Pick up and drop off in the neighbourhood.",
       status: "approved",
@@ -152,7 +150,7 @@ export function getSeeds(): Seeds {
       latitude: 9.0256,
       longitude: 38.7469,
       pricePerDay: 1500,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-02.jpg"],
       description:
         "Small and easy to park in Piassa, which is the point. Fuel efficient for short trips around the old quarter and Merkato.",
       status: "approved",
@@ -172,7 +170,7 @@ export function getSeeds(): Seeds {
       latitude: 9.0211,
       longitude: 38.7403,
       pricePerDay: 1800,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-03.jpg"],
       description:
         "Roomy for the price. Bluetooth, reversing camera and a full tank at pickup. Easy to reach from CMC and the Piazza area.",
       status: "approved",
@@ -192,7 +190,7 @@ export function getSeeds(): Seeds {
       latitude: 9.0152,
       longitude: 38.7452,
       pricePerDay: 1400,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-04.jpg"],
       description:
         "Manual and reliable. Good on the climb out of Kazanchis towards Entoto. Recently serviced, new tyres.",
       status: "approved",
@@ -212,7 +210,7 @@ export function getSeeds(): Seeds {
       latitude: 9.0134,
       longitude: 38.7594,
       pricePerDay: 1700,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-05.jpg"],
       description:
         "Folds the rear seats flat, which makes it the practical one for moving furniture or luggage between Sarbet and the northern suburbs.",
       status: "approved",
@@ -232,9 +230,9 @@ export function getSeeds(): Seeds {
       latitude: 9.0195,
       longitude: 38.7392,
       pricePerDay: 1300,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-06.jpg"],
       description:
-        "Older Corolla, still in good order. Submitted for review: the listing photos are still missing.",
+        "Older Corolla, still in good order. Submitted for review with a fresh set of listing photos.",
       status: "pending",
       unavailableDates: [],
       createdAt: timestampDaysFromToday(-3),
@@ -252,9 +250,9 @@ export function getSeeds(): Seeds {
       latitude: 8.9971,
       longitude: 38.7802,
       pricePerDay: 1100,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-07.jpg"],
       description:
-        "Rejected listing: the photos did not match the car and the registration was not provided.",
+        "Rejected listing: the registration was not provided and the photo set was incomplete.",
       status: "rejected",
       unavailableDates: [],
       createdAt: timestampDaysFromToday(-90),
@@ -272,7 +270,7 @@ export function getSeeds(): Seeds {
       latitude: 8.9901,
       longitude: 38.8044,
       pricePerDay: 3200,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-08.jpg"],
       description:
         "Seven seater for family groups. Currently off the road for a service, so the listing is inactive.",
       status: "inactive",
@@ -292,7 +290,7 @@ export function getSeeds(): Seeds {
       latitude: 9.0088,
       longitude: 38.7831,
       pricePerDay: 1200,
-      photos: [PLACEHOLDER],
+      photos: ["/images/cars/car-09.jpg"],
       description:
         "Draft listing. The owner has not finished the description or added the registration yet.",
       status: "draft",
