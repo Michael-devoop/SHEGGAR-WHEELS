@@ -49,7 +49,7 @@ export default function Navbar({
           className={
             hideNavBelowLg
               ? "hidden lg:order-2 lg:block lg:w-auto lg:flex-1"
-              : "order-3 w-full overflow-x-auto lg:order-2 lg:w-auto lg:flex-1"
+              : "order-3 w-full overflow-x-auto overscroll-x-contain no-scrollbar lg:order-2 lg:w-auto lg:flex-1"
           }
         >
           <Suspense fallback={<NavList items={items} />}>
